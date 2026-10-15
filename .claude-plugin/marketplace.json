@@ -1,0 +1,14 @@
+{
+  "name": "portos",
+  "description": "Port OS skills and its cloud MCP connection.",
+  "owner": {
+    "name": "Mirumiru inc."
+  },
+  "plugins": [
+    {
+      "name": "portos",
+      "source": "./",
+      "description": "Connect your AI assistant to authorized devices through the Port OS cloud."
+    }
+  ]
+}
