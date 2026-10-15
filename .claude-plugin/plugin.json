@@ -1,0 +1,15 @@
+{
+  "name": "portos",
+  "version": "0.1.0",
+  "description": "Connect your AI assistant to authorized devices through the Port OS cloud.",
+  "author": {
+    "name": "Mirumiru inc."
+  },
+  "homepage": "https://portoperatingsystem.com/",
+  "icon": "./assets/logo.png",
+  "documentationUrl": "https://portoperatingsystem.com/docs/getting-started/",
+  "supportUrl": "https://portoperatingsystem.com/contact/",
+  "privacyPolicyUrl": "https://portoperatingsystem.com/privacy-policy/",
+  "termsOfServiceUrl": "https://portoperatingsystem.com/terms-of-service/",
+  "license": "LicenseRef-Mirumiru-Proprietary"
+}

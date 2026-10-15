@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "portos": { "type": "http", "url": "https://api.portoperatingsystem.com/mcp" }
+  }
+}
