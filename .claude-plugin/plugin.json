@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Connect your AI assistant to authorized devices through the Port OS cloud.",
   "author": {
-    "name": "Mirumiru inc."
+    "name": "Mirumiru inc.",
+    "email": "dre@portoperatingsystem.com"
   },
   "homepage": "https://portoperatingsystem.com/",
   "icon": "./assets/logo.png",
