@@ -18,8 +18,7 @@ For Claude Code, install from the plugin-only GitHub repository:
 /plugin install portos --marketplace portpowered/portos-plugin
 ```
 
-The repository is currently private staging; installation requires repository
-access until public release. This installs skills and the cloud connection
+This installs skills and the cloud connection
 configuration. It does not start a local server or complete account authorization.
 
 Install Port OS in the host, then connect through its OAuth flow. Sign in to
@@ -53,7 +52,7 @@ monitoring and media compatibility require their own acceptance evidence.
 ## Distribution and verification
 
 This source provides OpenAI portable and Claude native manifests over the same
-cloud service and skills. The private Port OS development repository validates and exports the platform packages from shared Markdown skills. This plugin-only distribution contains the remote connection configuration, skills and listing assets.
+cloud service and skills. The Port OS development repository validates and exports the platform packages from shared Markdown skills. Other Port OS repositories are listed at [portpowered/index](https://github.com/portpowered/index). This plugin-only distribution contains the remote connection configuration, skills and listing assets.
 
 Public directory review is not complete. Publisher verification, provider
 eligibility, policy coverage, supported regions, real host tests and reviewer
