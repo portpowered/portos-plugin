@@ -14,11 +14,12 @@ Do not require a city/ZIP before resolving that distinction. For explicit indoor
 requests, discover a thermostat/temperature sensor and read ambient temperature;
 a setpoint is not a room measurement. Respect explicit outdoor/weather intent.
 
-Retrieve the task guide index using the connected Port OS guide_read tool without
-a topic, or MCP resources/read for portos://guides/index. Read only the relevant
-topic: temperature, lighting, cameras, rooms, media, battery or find-phone. The server guides own the
-schemas, capability selection, verification and operation limits; do not invent
-a command from a product name.
+Read the task guide index at `references/index.md` and the relevant bundled reference:
+temperature, lighting, cameras, rooms, media, battery, find-phone, files or reminders.
+These are the same Markdown guides published on the website and exposed as MCP
+resources at portos://guides/{topic}. When references are unavailable, read
+portos://guides/index with resources/read. The guides explain capability selection,
+documented payload fields, verification and operation limits; do not invent commands from product names.
 
 Use host-listed account labels to choose the likely authorized home-device
 connection. If discovery misses a device, check relevant authorized connections
