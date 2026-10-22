@@ -4,7 +4,7 @@ Read the guide that matches the user's task before an unfamiliar workflow. Use M
 
 | User request | Resource | Skill reference topic |
 | --- | --- | --- |
-| Connect the cloud plugin or sign in with a website key | portos://guides/setup | setup |
+| Connect the cloud plugin, sign in or verify a first connection | portos://guides/first-setup | first-setup |
 | Shared connected-home skill and safety/readback workflow | portos://guides/connected-home | connected-home |
 | Find/list devices; identify a camera, thermostat, lock, phone or tracker | portos://guides/discovery | discovery |
 | Turn off the lights; dim a lamp; check light state | portos://guides/lighting | lighting |

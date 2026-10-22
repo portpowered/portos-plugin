@@ -11,6 +11,6 @@ For upload, select a concrete Drive route that declares upload-file, use its doc
 
 Collect Photos by unique itemId across pages. The adapter excludes Apple's repeated boundary asset while preserving provider-rank advancement; a filtered page can be empty and still have nextCursor. Concurrent library changes can introduce other overlaps, so report the unique count and do not process the same asset twice.
 
-Reminders uses its own provider capability; only use create/update/delete when declared, since legacy iCloud accounts may expose list-reminders only.
+Reminders uses its own provider capability; only use create/update/delete when declared, since older iCloud accounts may expose list-reminders only.
 
 For multiple attached files, preserve each attachment's actual bytes, filename and MIME type; do not reconstruct a binary file from extracted text or a preview. Report one result per file. An existing-name rejection must leave that file untouched and must not prevent truthful reporting of another file's result. Do not rename, overwrite or retry an uncertain write automatically. Verify downloads against the original bytes when available; matching a filename or byte count alone does not establish an exact transfer. The MCP inline-result limit can be lower than the adapter's 10 MiB file limit; inspect the actual transfer result and explain bounded coverage.
