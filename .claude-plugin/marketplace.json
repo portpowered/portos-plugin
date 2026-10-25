@@ -1,6 +1,6 @@
 {
   "name": "portos",
-  "description": "Port OS skills and its cloud MCP connection.",
+  "description": "Connect Claude to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "owner": {
     "name": "Mirumiru inc."
   },
@@ -8,7 +8,7 @@
     {
       "name": "portos",
       "source": "./",
-      "description": "Connect your AI assistant to authorized devices through the Port OS cloud."
+      "description": "Connect Claude to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin."
     }
   ]
 }
