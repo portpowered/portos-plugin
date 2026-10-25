@@ -4,6 +4,8 @@ Use group_query for room/floor/home membership and parentPath. Use endpoint_quer
 
 Read the documented payload fields for the exact declared endpoint/group command. For robotic vacuum clean-room, send control to the robot endpoint whose controllableGroups contains the requested room, using copied groupIds in the declared payload. Check the robotic-vacuum-cleaner interface configuration: multiple groupIds require supportsMultiRoomCleaning=true. If it is absent or false, select one room. Do not send cleaning to a room endpoint or invent a second action path. Other group controls require that the selected authorized group route advertises the message.
 
+To show a room map or let someone pick rooms, call endpoint_show on the vacuum (the controller) with primary house-map. Its card has room picking; never draw a map or floor plan yourself from group spatial geometry, and do not read one group at a time to collect it.
+
 After acceptance verify relevant available fresh observations. Acceptance is not proof that cleaning finished. Do not automatically repeat state-changing commands or report missing state as success. Rename, membership, enablement and merge operations use group_manage/endpoint_manage as a separately authorized metadata task.
 
 ## Bounded Roborock movement

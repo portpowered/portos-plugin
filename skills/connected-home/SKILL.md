@@ -29,7 +29,7 @@ documented payload fields, verification and operation limits; do not invent comm
 
 For other device families, read the matching Port OS skill guide at
 /docs/for-ai/guides/<guide-id>.md: security (locks, doorbells, security panels),
-kitchen (refrigerators, ovens, cooktops), sensors (air quality, humidity, contact,
+kitchen (refrigerators, ovens, cooktops, pet feeders), sensors (air quality, humidity, contact,
 motion, purifiers), trackers (phone, watch, wallet and laptop trackers),
 cloud-drives (iCloud Drive and Photos), model-inference (fal.ai image, speech and
 music generation, which can cost money) and reminders-and-calendars. Unlocking a
@@ -52,8 +52,14 @@ candidate before claiming iCloud has no reading. Preserve old records; discovery
 does not authorize deleting or merging them.
 
 Use declared endpoint_query expansions with forceDeviceAttributeQuery:true for
-current state. Missing, stale or unavailable readings mean current state is
-unknown. Inspect camera snapshot pixels before describing a scene. Accepted
+current state. An observation with error code PROVIDER_NO_STATE means the provider
+answered but has no value for that attribute. A STALE reading is the last known state: report it with its sampledAt, not as live or unknown. Errored, missing, invalid or
+PROVIDER_NO_STATE readings mean state is
+unknown, and a STALE value alone must not support a safety claim such as locked or off. PROVIDER_NO_STATE is not offline: the device may still accept commands, so
+send the requested command once and report the outcome as unconfirmed. Only an
+UNREACHABLE or ENDPOINT_UNREACHABLE (423) result means offline and a rejected command.
+When a chosen device is a simulator, say so, and prefer a real device when both match
+(never treat a simulator reading as the household's real state). Inspect camera snapshot pixels before describing a scene. Accepted
 control alone does not confirm a physical outcome; verify fresh observations and
 do not automatically repeat state changes.
 
@@ -66,3 +72,5 @@ not establish that the MCP account lacks the camera.
 
 Explain results and needed clarification in plain customer language. Do not
 explain that an internal skill requires a question.
+
+Scopes: a connection can only do what its scopes allow. Reading needs `endpoint:read` and `group:read`, control needs `message:send`, `endpoint_manage` needs `endpoint:write` and `group_manage` needs `group:manage`. On `insufficient_scope` (403) do not retry: ask the customer to reconnect or approve the scope the response names. See the "Scopes for setup" section of the first-setup guide.
