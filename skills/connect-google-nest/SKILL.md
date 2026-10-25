@@ -13,9 +13,7 @@ metadata:
 
 # Connect Google Nest
 
-Link Google Nest to Port OS to control your Nest thermostats and read temperature and camera live view. You create your own Google Cloud OAuth client and a Device Access project, and give Port OS the client ID, the client secret and the Device Access project ID. This works for any account. Motion, person and doorbell notifications need Google's event feed and are not available yet on this connection; see What works on this connection.
-
-The website flow has two separate steps. First you choose **Save credentials**, which stores the values as this plugin's one configuration. Then, now or in a later session, you choose **Connect to Google Nest**. Once a configuration is saved the **Set up the connection** step collapses and **Connect to Google Nest** is the only primary button; open **Set up the connection** again to see the Redirect URI, change the saved values (the client secret stays masked) or delete the configuration, which asks you to confirm. Saving again updates the same configuration and never creates a second one, and a failed or cancelled authorization leaves it in place so you can try again. Nothing is connected until Google Nest returns and Port OS completes the link.
+Link Google Nest to Port OS to control your Nest devices.
 
 ## Create your Google Cloud client and Device Access project
 
@@ -23,7 +21,7 @@ You need a personal Google account (a Google Workspace account cannot register f
 
 ### 1. Copy the Redirect URI from Port OS
 
-In Port OS, open **Add a device** and choose Google Nest. Under **How do you want to connect Google Nest?**, choose **Use my own app**. Copy the value under **Redirect URI to register in your Google Nest app** with **Copy redirect URI**. Keep this tab open; you return to it in step 12. On the hosted service the value is below; the screen is the source of truth.
+Copy this link to set up the Nest account.
 
 ```text
 https://auth.portoperatingsystem.com/plugins

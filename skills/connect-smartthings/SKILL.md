@@ -13,9 +13,7 @@ metadata:
 
 # Connect SmartThings
 
-Link SmartThings to Port OS to read and control your SmartThings devices. You register an OAuth-In app with the SmartThings CLI and give Port OS its client ID and secret. This works for any account.
-
-The website flow has two separate steps. First you choose **Save credentials**, which stores the values as this plugin's one configuration. Then, now or in a later session, you choose **Connect to SmartThings**. Once a configuration is saved the **Set up the connection** step collapses and **Connect to SmartThings** is the only primary button; open **Set up the connection** again to see the Redirect URI, change the saved values (the client secret stays masked) or delete the configuration, which asks you to confirm. Saving again updates the same configuration and never creates a second one, and a failed or cancelled authorization leaves it in place so you can try again. Nothing is connected until SmartThings returns and Port OS completes the link.
+Link SmartThings to Port OS to read and control your SmartThings devices.
 
 ## Register your SmartThings app
 
@@ -31,7 +29,7 @@ smartthings --version
 
 ### 2. Copy the Redirect URI from Port OS
 
-In Port OS, open **Add a device** and choose SmartThings. Under **How do you want to connect SmartThings?**, choose **Use my own app**. Copy the value under **Redirect URI to register in your SmartThings app** with **Copy redirect URI**. This is the URL of the Port OS setup page; on the hosted service it is below. Keep this tab open; you return to it in step 6.
+Copy this link to set up the SmartThings account.
 
 ```text
 https://auth.portoperatingsystem.com/plugins

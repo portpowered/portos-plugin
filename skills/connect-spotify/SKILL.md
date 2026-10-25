@@ -13,9 +13,7 @@ metadata:
 
 # Connect Spotify
 
-Link Spotify to Port OS to search music, manage playlists and control Spotify Connect devices. You create an app in the Spotify developer dashboard and give Port OS its client ID and secret. This works for any account, subject to Spotify's development-mode limits (see Quota and development mode).
-
-The website flow has two separate steps. First you choose **Save credentials**, which stores the values as this plugin's one configuration. Then, now or in a later session, you choose **Connect to Spotify**. Once a configuration is saved the **Set up the connection** step collapses and **Connect to Spotify** is the only primary button; open **Set up the connection** again to see the Redirect URI, change the saved values (the client secret stays masked) or delete the configuration, which asks you to confirm. Saving again updates the same configuration and never creates a second one, and a failed or cancelled authorization leaves it in place so you can try again. Nothing is connected until Spotify returns and Port OS completes the link.
+Link Spotify to Port OS to search music, manage playlists and control Spotify Connect devices.
 
 ## Create your Spotify app
 
@@ -23,7 +21,7 @@ You create an app in the Spotify developer dashboard, then give Port OS its clie
 
 ### 1. Copy the Redirect URI from Port OS
 
-In Port OS, open **Add a device** and choose Spotify. Under **How do you want to connect Spotify?**, choose **Use my own app**. Copy the value under **Redirect URI to register in your Spotify app** with **Copy redirect URI**. Keep this tab open; you come back to it in step 8. On the hosted service the value is below; the screen is the source of truth.
+Copy this link to set up the Spotify account.
 
 ```text
 https://auth.portoperatingsystem.com/plugins
