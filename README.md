@@ -1,8 +1,22 @@
-# Port OS
+# Port OS Smart Home
 
-Connect devices to AI. Automate things in your life and have your agent manage your home.
+Connect Claude to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.
 
-With compatible connected devices, ask your agent to clean rooms with your robot vacuum, ring a supported phone or wallet tracker, turn off lights, check batteries, inspect a camera for a package or a pet, check a supported lock's reported state, play music, control a TV, or work with your connected cloud photo library. Agents can build laundry notifications, speaker wake-ups and other scheduled or monitored routines when the required device observations, controls and agent automation are configured. The plugin does not independently detect sleep or run continuous monitoring merely because it is installed.
+Port OS Smart Home is a cloud service that lets you and your agents work with your devices in your home, or from anywhere else in the world.
+
+Port OS supports such functions as:
+
+1. Show me the camera
+2. Run the vacuum in the living room
+3. Turn off the lights
+4. Set the temperature
+5. Ring my phone
+6. Play a song on Spotify on the TV
+7. Check if the doors are locked
+8. Set an audio reminder on my speakers
+9. Check my calendar and display it on the TV
+
+Port OS exposes APIs in REST, MCP and other forms.
 
 Port OS exposes APIs that allow agents to find your devices, check their state and control supported capabilities. Access follows the permissions you approve, with granular authorization per agent, device, person and capability.
 
@@ -60,6 +74,7 @@ access remain release requirements. Installing this source is separate from
 approval or availability in either public directory.
 
 [Website](https://portoperatingsystem.com/) ·
+[Documentation](https://portoperatingsystem.com/docs/getting-started/) ·
 [Support](https://portoperatingsystem.com/contact/) ·
 [Privacy](https://portoperatingsystem.com/privacy-policy/) ·
 [Terms](https://portoperatingsystem.com/terms-of-service/)
