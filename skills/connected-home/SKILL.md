@@ -34,12 +34,11 @@ lighting, thermostats, vacuums (rooms and the house map), media, cameras,
 security (locks, doorbells, security panels), kitchen (refrigerators, ovens,
 cooktops, pet feeders), sensors (air quality, humidity, contact, motion,
 purifiers), trackers (phone, watch, wallet and laptop trackers), cloud-drives
-(iCloud Drive and Photos), model-inference (fal.ai image, speech and music
-generation, which can cost money) and reminders-and-calendars. For accounts,
+(iCloud Drive and Photos) and reminders-and-calendars. For accounts,
 use add-devices, manage-devices, manage-groups, manage-simulators,
 grant-endpoint-permissions and troubleshoot-connections. Unlocking a door,
-disarming a panel, oven heat, deleting files and paid generation runs need the
-customer's confirmation first.
+disarming a panel, oven heat and deleting files need the customer's
+confirmation first.
 
 Use host-listed account labels to choose the likely authorized home-device
 connection. If discovery misses a device, check relevant authorized connections
