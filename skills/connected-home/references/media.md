@@ -1,6 +1,6 @@
 # Work with music, speakers and TVs
 
-Find the intended speaker/TV or media library with endpoint_query. Inspect the exact endpointId; copy declared command and route IDs. Search music and list/get playlists through control with waitForResult:true when the command returns correlated results. Use the returned media identifiers instead of inventing IDs or treating an output event as a command.
+Find the intended speaker/TV or media library with endpoint_query. Inspect the exact endpointId; copy declared command and route IDs. Search music and list/get playlists when the command returns correlated results: REST sets top-level `responseType: "SYNC"` beside `target` and `message`; MCP sets `waitForResult: true` on control. Each message body accepts only its own declared fields (`search-media` has no `provider`). Use the returned media identifiers instead of inventing IDs or treating an output event as a command.
 
 Echo Dot Max/Alexa speakers can be typed VOICE_ASSISTANT and declare media-player and speaker commands. Search names and capabilities before saying Alexa control is unavailable. Check relevant authorized account labels (for example home devices versus iCloud) and retain the account that returned each target. For "this song" without a referent, ask title/artist/link without a blanket capability denial. A declared search-and-play command may accept a song query directly; use its exact documented payload fields rather than inventing a media URI or requiring a separate music library when this route supports direct search.
 
