@@ -7,6 +7,7 @@
     "email": "dre@portoperatingsystem.com"
   },
   "homepage": "https://portoperatingsystem.com/",
+  "repository": "https://github.com/portpowered/portos-plugin",
   "icon": "./assets/logo.webp",
   "documentationUrl": "https://portoperatingsystem.com/docs/getting-started/",
   "supportUrl": "https://portoperatingsystem.com/contact/",
