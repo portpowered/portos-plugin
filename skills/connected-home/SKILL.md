@@ -6,7 +6,7 @@ metadata:
   guide-id: skill-connected-home
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 22
+  last modified: 2026, october, 24
 ---
 
 # Connected home requests
@@ -62,6 +62,13 @@ When a chosen device is a simulator, say so, and prefer a real device when both 
 (never treat a simulator reading as the household's real state). Inspect camera snapshot pixels before describing a scene. Accepted
 control alone does not confirm a physical outcome; verify fresh observations and
 do not automatically repeat state changes.
+
+Show what you changed. After a command the customer can see in the device's
+card (lights, a thermostat, a robot vacuum), call endpoint_show on each device
+you acted on, by its exact endpointId, so the card shows its current state; one
+call per device, because a query matching several devices opens only a name
+list. Answer in a sentence or two next to the card, and never draw your own card
+for it.
 
 For cameras that declare RTC streaming but no on-demand snapshot, prefer the
 embedded endpoint_show panel's supported live-view control. Showing a panel does
