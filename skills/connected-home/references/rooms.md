@@ -6,7 +6,7 @@ Read the documented payload fields for the exact declared endpoint/group command
 
 To show a room map or let someone pick rooms, call endpoint_show on the vacuum (the controller) with primary house-map. Its card has room picking; never draw a map or floor plan yourself from group spatial geometry, and do not read one group at a time to collect it.
 
-After acceptance verify relevant available fresh observations, then call endpoint_show on the robot's exact endpointId so the customer sees it cleaning. Acceptance is not proof that cleaning finished. Do not automatically repeat state-changing commands or report missing state as success. Rename, membership, enablement and merge operations use group_manage/endpoint_manage as a separately authorized metadata task.
+After acceptance verify relevant available fresh observations, then call endpoint_show on the robot's exact endpointId so the customer sees it cleaning. Acceptance is not proof that cleaning finished. Several rooms go in one clean-room request, in cleaning order. Robot status does not list target rooms, so name the rooms you sent rather than reading them back. Do not automatically repeat state-changing commands or report missing state as success. Rename, membership, enablement and merge operations use group_manage/endpoint_manage as a separately authorized metadata task.
 
 ## Bounded Roborock movement
 
