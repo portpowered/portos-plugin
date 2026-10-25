@@ -8,7 +8,7 @@ metadata:
   capabilities: power
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 23
+  last modified: 2026, october, 25
 ---
 
 # Connect SmartThings
@@ -17,15 +17,13 @@ Link SmartThings to Port OS to read and control your SmartThings devices.
 
 ## Register your SmartThings app
 
-You register an OAuth-In app with the SmartThings CLI, then give Port OS its client ID and client secret.
+You register an OAuth-In app with Samsung's SmartThings CLI on your own computer, then enter its client ID and client secret in the Port OS website. Every step here is yours to do; an assistant only explains them.
 
-### 1. Install the SmartThings CLI
+An assistant helping with this guide never installs software, never runs these commands for you, and never asks for, reads or repeats the client secret. The secret goes only into the Port OS website form in step 6.
 
-Download the SmartThings CLI for your system from the [SmartThings CLI releases page](https://github.com/SmartThingsCommunity/smartthings-cli/releases). On Windows, run the `.msi` installer. On macOS or Linux, download the binary or archive, extract it if needed and put it on your path. Check the install:
+### 1. Get the SmartThings CLI
 
-```bash
-smartthings --version
-```
+Install the SmartThings CLI by following Samsung's instructions on the [SmartThings CLI page](https://github.com/SmartThingsCommunity/smartthings-cli#installation). In your own terminal, `smartthings --version` confirms it is installed.
 
 ### 2. Copy the Redirect URI from Port OS
 
@@ -37,13 +35,7 @@ https://auth.portoperatingsystem.com/plugins
 
 ### 3. Create the app
 
-Run:
-
-```bash
-smartthings apps:create
-```
-
-On the first command, the CLI opens a browser window. Sign in with your Samsung account and grant the CLI access. When asked for the app type, choose **OAuth-In App**.
+In your own terminal, run `smartthings apps:create`. On the first command, the CLI opens a browser window. Sign in with your Samsung account and grant the CLI access. When asked for the app type, choose **OAuth-In App**.
 
 ### 4. Set the OAuth redirect URI and scopes
 
@@ -51,7 +43,7 @@ When the CLI asks for the redirect URI, paste the Port OS setup page URL from st
 
 ### 5. Copy the client ID and client secret
 
-The CLI prints the app's OAuth client ID and client secret. The secret is shown once, so copy both now. Treat the secret like a password.
+The CLI prints the app's OAuth client ID and client secret. The secret is shown once, so copy both now. Treat the secret like a password: paste it only into the Port OS website, never into a chat.
 
 ### 6. Enter the credentials in Port OS
 
