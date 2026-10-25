@@ -1,6 +1,6 @@
 # Port OS Smart Home
 
-Connect Claude to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.
+Connect Claude, ChatGPT or Codex to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.
 
 Port OS Smart Home is a cloud service that lets you and your agents work with your devices in your home, or from anywhere else in the world.
 
@@ -32,7 +32,9 @@ For Claude Code, install from the plugin-only GitHub repository:
 /plugin install portos --marketplace portpowered/portos-plugin
 ```
 
-This installs skills and the cloud connection
+In ChatGPT or Codex, install Port OS Smart Home from the plugin directory.
+
+Either install adds the skills and the cloud connection
 configuration. It does not start a local server or complete account authorization.
 
 Install Port OS in the host, then connect through its OAuth flow. Sign in to

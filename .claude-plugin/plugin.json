@@ -11,5 +11,20 @@
   "repository": "https://github.com/portpowered/portos-plugin",
   "icon": "./assets/logo.webp",
   "license": "LicenseRef-Mirumiru-Proprietary",
-  "keywords": ["smart home", "iot", "home automation", "lightbulbs", "lights", "cameras", "thermostats", "robot vacuums", "locks", "devices", "television", "media", "speakers", "spotify"]
+  "keywords": [
+    "smart home",
+    "iot",
+    "home automation",
+    "lightbulbs",
+    "lights",
+    "cameras",
+    "thermostats",
+    "robot vacuums",
+    "locks",
+    "devices",
+    "television",
+    "media",
+    "speakers",
+    "spotify"
+  ]
 }
