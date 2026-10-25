@@ -1,6 +1,6 @@
 ---
 name: connected-home
-description: Use for connected-device requests such as turning off lights or a room switch, lowering the thermostat temperature, checking the temperature right now, vacuuming a room, playing or pausing music on Echo/Alexa, lowering speaker volume, looking at a kitchen camera, finding or pinging a phone, or checking whether a phone/watch is dead or needs charging, locks and doorbells, the fridge or oven, air quality and door/motion sensors, finding a wallet or laptop tracker, iCloud Drive files, AI image or music generation, and reminders or calendars. For a bare temperature question with no indoor/outdoor context, clarify which before assuming weather. Explicit weather forecasts or city temperatures do not require this workflow.
+description: Use for connected-device requests such as turning off lights or a room switch, lowering the thermostat temperature, checking the temperature right now, vacuuming a room, playing or pausing music on Echo/Alexa, lowering speaker volume, looking at a kitchen camera, finding or pinging a phone, or checking whether a phone/watch is dead or needs charging, locks and doorbells, the fridge or oven, air quality and door/motion sensors, finding a wallet or laptop tracker, iCloud Drive files, and reminders or calendars. For a bare temperature question with no indoor/outdoor context, clarify which before assuming weather. Explicit weather forecasts or city temperatures do not require this workflow.
 metadata:
   title: Connected home requests
   guide-id: skill-connected-home
