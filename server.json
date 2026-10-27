@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.portpowered/portos",
   "title": "Port OS Smart Home",
-  "description": "Connect AI to smart home devices: discover, read state and control with approved permissions.",
-  "version": "1.0.0",
+  "description": "Control your Philips lights, Sonos speakers, Roborock vacuums and more with Port OS cloud.",
+  "version": "1.0.1-metadata.1",
   "websiteUrl": "https://portoperatingsystem.com/",
   "remotes": [
     {
