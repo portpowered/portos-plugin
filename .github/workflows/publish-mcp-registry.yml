@@ -1,0 +1,38 @@
+name: publish-mcp-registry
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mcp-registry
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main' && (github.repository == 'portpowered/portos-monolith' || github.repository == 'portpowered/portos-plugin')
+    runs-on: ubuntu-latest
+    env:
+      MCP_SERVER_JSON: ${{ github.repository == 'portpowered/portos-plugin' && 'server.json' || 'plugins/portos/server.json' }}
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install pinned official publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error \
+            https://github.com/modelcontextprotocol/registry/releases/download/v1.8.5/mcp-publisher_linux_amd64.tar.gz \
+            --output "$RUNNER_TEMP/mcp-publisher.tar.gz"
+          echo "2d151ac57275c9a6684d9d22b1cba81058bab195ea0a162e8fce3c6a5ec32812  $RUNNER_TEMP/mcp-publisher.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/mcp-publisher.tar.gz" -C "$RUNNER_TEMP" mcp-publisher
+      - name: Authenticate using short-lived GitHub identity
+        run: '"$RUNNER_TEMP/mcp-publisher" login github-oidc'
+      - name: Publish hosted MCP metadata
+        run: '"$RUNNER_TEMP/mcp-publisher" publish "$MCP_SERVER_JSON"'
