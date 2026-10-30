@@ -8,6 +8,12 @@ Use it in ChatGPT on the web or desktop, and in Codex. The OpenAI package
 explicitly sets `requires_local_executor` to `false`: its MCP server is hosted
 by Port OS, with no local server, command or desktop runtime required.
 
+ChatGPT web also needs a registered hosted MCP connection. For public
+distribution, upload this package through **With MCP** in the OpenAI Developer
+Portal and complete its OAuth setup. A private ZIP import alone does not register
+that connection; its owner must bind the plugin to an existing verified Port OS
+connection. The public ZIP intentionally contains no personal connection IDs.
+
 Port OS supports such functions as:
 
 1. Show me the camera
@@ -39,7 +45,7 @@ For Claude Code, install from the plugin-only GitHub repository:
 For Codex, install the complete public plugin, including its skills and remote MCP connection:
 
 ```text
-codex plugin marketplace add portpowered/portos-plugin --ref v0.1.2 --json
+codex plugin marketplace add portpowered/portos-plugin --ref v0.1.4 --json
 codex plugin add portos@portos --json
 ```
 
