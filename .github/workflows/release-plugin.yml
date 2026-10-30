@@ -1,0 +1,95 @@
+name: Plugin release packages
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-release
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: github.repository == 'portpowered/portos-plugin'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.package.outputs.version }}
+      source: ${{ steps.package.outputs.source }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.21.0'
+      - name: Build both installable ZIPs
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          node .github/scripts/packagePluginRelease.mjs . dist > release-metadata.json
+          echo "version=$(jq -r '.version' release-metadata.json)" >> "$GITHUB_OUTPUT"
+          echo "source=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          (cd dist && sha256sum --check SHA256SUMS)
+          unzip -t dist/portos-claude-*.zip
+          unzip -t dist/portos-chatgpt-*.zip
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: portos-plugin-${{ steps.package.outputs.version }}
+          path: dist/
+          if-no-files-found: error
+  release:
+    needs: package
+    if: >-
+      github.repository == 'portpowered/portos-plugin' &&
+      (startsWith(github.ref, 'refs/tags/v') ||
+       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: portos-plugin-${{ needs.package.outputs.version }}
+          path: dist
+      - name: Publish versioned release without replacing existing assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PLUGIN_VERSION: ${{ needs.package.outputs.version }}
+          SOURCE_SHA: ${{ needs.package.outputs.source }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$PLUGIN_VERSION"
+          if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_REF_NAME" != "$tag" ]]; then
+            echo 'Release tag must match both plugin manifest versions.' >&2
+            exit 1
+          fi
+          (cd dist && sha256sum --check SHA256SUMS)
+          if gh release view "$tag" >/dev/null 2>&1; then
+            actual=$(gh api "repos/$GH_REPO/commits/$tag" --jq .sha)
+            [[ "$actual" == "$SOURCE_SHA" ]] || { echo 'Version already belongs to a different commit; bump the manifests.' >&2; exit 1; }
+          else
+            if gh api "repos/$GH_REPO/git/ref/tags/$tag" > existing-tag.json 2>/dev/null; then
+              actual=$(gh api "repos/$GH_REPO/commits/$tag" --jq .sha)
+              [[ "$actual" == "$SOURCE_SHA" ]] || { echo 'Tag points to a different commit.' >&2; exit 1; }
+            fi
+            printf '%s\n' "Install the Claude ZIP in a compatible Claude host, or upload the ChatGPT ZIP at platform.openai.com/plugins. Directory approval is separate." "" "Source: $SOURCE_SHA. Check SHA256SUMS before installation." > release-notes.txt
+            gh release create "$tag" --target "$SOURCE_SHA" --draft --title "Port OS $PLUGIN_VERSION" --notes-file release-notes.txt
+          fi
+          mkdir remote-assets
+          for asset in dist/*; do
+            name=$(basename "$asset")
+            if gh release download "$tag" --pattern "$name" --dir remote-assets >/dev/null 2>&1; then
+              cmp "$asset" "remote-assets/$name" || { echo "Existing $name differs; assets are immutable." >&2; exit 1; }
+            else
+              gh release upload "$tag" "$asset"
+            fi
+          done
+          gh release edit "$tag" --draft=false

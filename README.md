@@ -56,14 +56,42 @@ keys cannot sign in or approve new connections.
 ## Supported behavior
 
 Discover authorized devices, inspect reported state and use declared controls.
-Device capabilities depend on connected providers. The assistant discovers
-schemas before commands, distinguishes ambient temperature from setpoints,
-and reads fresh observations before claiming a command completed. Interactive
+Device capabilities depend on connected providers. The assistant discovers missing capabilities, distinguishes ambient temperature
+from setpoints, and acknowledges ordinary commands without automatic polling.
+A dispatch acceptance is separate from observed completion. Interactive
 panels require a host supporting MCP Apps and an enabled cloud deployment.
 
 The plugin cannot read local computer files, buy hardware, bypass MFA or device
 permissions, or guarantee completion from dispatch acceptance. Cross-host
 monitoring and media compatibility require their own acceptance evidence.
+
+## Release ZIPs
+
+Download the platform ZIP and `SHA256SUMS` from
+[GitHub Releases](https://github.com/portpowered/portos-plugin/releases/latest):
+
+- `portos-claude-<version>.zip`: native Claude plugin with `.claude-plugin/plugin.json` at its root, for Claude hosts supporting plugin ZIP installation.
+- `portos-chatgpt-<version>.zip`: portable Agent Plugins package with `plugin.json` and `mcp.json` at its root, for upload at [OpenAI Plugins](https://platform.openai.com/plugins).
+
+Both include the same skills, assets and remote service. Neither ZIP contains
+marketplace metadata, workflows, credentials or a local server. Directory
+approval and availability are separate from downloading or uploading a package.
+Claude Code users can continue to install from the marketplace command above.
+
+Every push to the plugin repository's main branch builds downloadable workflow
+artifacts. A `v<version>` tag or a manual run of **Plugin release packages** from
+main publishes the GitHub release. Both manifests must agree with the tag.
+Releasing changed files requires a new manifest version; existing release
+assets are verified and never overwritten.
+
+To reproduce inside the plugin-only repository with Node.js 24.21.0:
+
+```text
+node .github/scripts/packagePluginRelease.mjs . dist
+```
+
+In the development monorepo, run `make -C plugins/portos build`. Versioned ZIPs
+and checksums appear under `dist/assistant-plugins/releases/`.
 
 ## Distribution and verification
 

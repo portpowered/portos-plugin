@@ -7,14 +7,14 @@ Read the guide that matches the user's task before an unfamiliar workflow. Use M
 | Connect the cloud plugin, sign in or verify a first connection | portos://guides/first-setup | first-setup |
 | Shared connected-home skill and safety/readback workflow | portos://guides/connected-home | connected-home |
 | Find/list devices; identify a camera, thermostat, lock, phone or tracker | portos://guides/discovery | discovery |
-| Turn off the lights; dim a lamp; check light state | portos://guides/lighting | lighting |
+| Turn off the lights; dim a lamp; save or recall a room scene; check light state | portos://guides/lighting | lighting |
 | Lower the temperature; what's the temperature right now? Indoor ambient versus thermostat target | portos://guides/temperature | temperature |
 | What's going on in my kitchen? Look at my kitchen camera | portos://guides/cameras | cameras |
 | Is my phone dead? Check my Watch battery; should I charge it? | portos://guides/battery | battery |
 | Ping my phone; ring my phone; find my phone; locate my lost iPhone | portos://guides/find-phone | find-phone |
 | Find screenshots; download Photos; upload, rename or move Drive files; suggest cleanup | portos://guides/files | files |
 | Show my Shopping list; what's due today or overdue; add/complete an iCloud reminder | portos://guides/reminders | reminders |
-| Play on Echo Dot Max/Alexa; pause the song; lower volume; manage my playlist | portos://guides/media | media |
+| Search Spotify; play or extend a live mix on Sonos; play on Echo/Alexa; pause music; manage saved playlists | portos://guides/media | media |
 | Find a room/group; vacuum a room; move Roborock, explore the house or return home | portos://guides/rooms | rooms |
 
 Use endpoint_query for discovery and observations, control for declared commands, endpoint_manage/group_manage for metadata changes. Do not send outboundMessages as commands. Use documented payload fields for the declared command; the backend validates requests. Capability reference resources at portos://capability-interfaces/{name}/{version} publish interface declarations and reference documentation. Do not depend on runtime command input schemas.

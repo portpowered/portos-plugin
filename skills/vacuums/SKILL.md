@@ -7,30 +7,29 @@ metadata:
   capabilities: robotic-vacuum-cleaner cleaning-mode
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 24
+  last modified: 2026, october, 25
 ---
 
 # Control vacuums and cleaning rooms
 
-Find the robot endpoint and inspect its robotic-vacuum-cleaner and related capability declarations in [the directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md). Supported operations vary by provider; do not infer room cleaning, scheduling or modes from a device name.
+Find the robot endpoint and inspect its robotic-vacuum-cleaner and related declarations in [the directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md). Provider support varies; names do not establish room cleaning, schedules or modes.
 
-Use supported start/stop/mode schemas and full IDs. Spatial cleaning targets the robot endpoint with its supported room/zone payload; an endpoint group is not automatically a robot room. Check constraints and [dispatch semantics](https://portoperatingsystem.com/docs/for-ai/guides/using-the-api.md). Query fresh status afterward, then call `endpoint_show` on the robot so the customer sees it; accepted work is not completed cleaning. Put every requested room in one clean-room request, in cleaning order. Robot status does not list target rooms, so name the rooms you sent rather than reading them back. Ask for clarification when room mappings are ambiguous.
+Use supported start/stop/mode schemas and discovered IDs. Room/zone cleaning targets the robot endpoint; groups are not automatically robot rooms. Clarify ambiguous mappings and check constraints. Send ordinary commands once with `waitForResult: false`, acknowledge accepted/pending and stop; no automatic polling, status read or card. Fresh-read for state questions, requested verification or uncertain-outcome diagnosis. Show `endpoint_show` when requested. Acceptance does not establish completed cleaning. When multiple rooms are supported, send them in one clean-room request in cleaning order. Robot status does not list target rooms: name the rooms sent rather than claiming to read them back.
 
 ## Show the map or pick rooms
 
-- [ ] To show the map or let the customer pick rooms, call `endpoint_show` on the robot with `primary: house-map`. That card has room picking. Never draw your own map or floor plan from group spatial geometry, and do not read groups one by one to build one.
+- [ ] Show the robot's room picker with `endpoint_show`, `primary: house-map`. Never draw maps or floor plans from group geometry or query groups individually to build one.
 
 ## Select rooms on the website
 
-- [ ] Select a room on the robot's map to highlight it. Select it again to deselect it, or use Clear to remove all selections. Selecting a room does not send a command.
-- [ ] Select several rooms only when the robotic-vacuum-cleaner configuration advertises `supportsMultiRoomCleaning: true`; otherwise selection is limited to one room. Only groups the robot can clean are selectable.
-- [ ] Use Clean selected to send one `clean-room` command to the robot with the `groupIds` of the selected rooms. Check fresh state afterward; request acceptance does not establish completed cleaning.
+- [ ] Select a map room to highlight it; select again to deselect, or use Clear for all selections. Selection sends no command.
+- [ ] Select multiple rooms only with `supportsMultiRoomCleaning: true` in robotic-vacuum-cleaner configuration; otherwise select one. Only groups the robot can clean are selectable.
+- [ ] Clean selected sends one `clean-room` to the robot with the selected `groupIds`. Read fresh state afterward.
 
 ## Start and end remote movement
 
-- [ ] Prefer `unary-move` for a bounded movement with working live camera feedback. Roborock owns start, native readiness, five-second startup settling, fresh readiness revalidation, ordered moves and session end.
-- [ ] Keep movement duration in milliseconds and preserve its requested bound. Startup settling adds time before motion, not extra motion.
-- [ ] Explicit `start-session` acknowledgement does not establish readiness. Advanced callers must verify healthy native manual mode, settle for five seconds and recheck before a `move`; a generic RUNNING state alone is insufficient. Use `unary-move` when those native checks are unavailable.
-- [ ] Explicit `move` uses increasing `seqNum` values, beginning at 1 for a new session. `stop-session` stops movement; `end-session` exits manual mode. End an explicitly started session after success or failure, including cancellation, and before requesting docking.
-- [ ] Send one-way remote controls with dispatch-acceptance intent (`FIRE_FORGET` in REST; omit MCP `waitForResult`). This still reports dispatch errors. Do not wait for a nonexistent reply or automatically retry an uncertain physical move.
-
+- [ ] Prefer bounded `unary-move` with working live camera feedback. Roborock handles start, native readiness, five-second startup settling, fresh readiness revalidation, ordered moves and session end.
+- [ ] Preserve the requested duration in milliseconds. Settling precedes motion; it never extends motion.
+- [ ] `start-session` acceptance is not readiness. Advanced callers must verify healthy native manual mode, settle five seconds and recheck before `move`; RUNNING alone is insufficient. Without these checks, use `unary-move`.
+- [ ] For explicit `move`, increase `seqNum` from 1 per session. `stop-session` stops motion; `end-session` exits manual mode. End explicit sessions after success, failure or cancellation, before docking.
+- [ ] One-way controls use dispatch acceptance: REST `FIRE_FORGET`, MCP without `waitForResult`. Dispatch errors still surface. Never await a nonexistent reply or automatically retry uncertain physical movement.

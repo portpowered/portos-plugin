@@ -1,7 +1,7 @@
 {
   "name": "portos",
   "displayName": "Port OS Smart Home",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connect Claude to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "author": {
     "name": "Mirumiru inc.",

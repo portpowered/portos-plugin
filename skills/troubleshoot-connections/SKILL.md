@@ -29,4 +29,3 @@ First identify the failure boundary: documentation retrieval, registration, user
 | Committed cleanup pending | Read the committed state/result before any retry |
 
 See [API behavior](https://portoperatingsystem.com/docs/for-ai/guides/using-the-api.md). Never include tokens, provider secrets or another user's private resources in diagnostics.
-

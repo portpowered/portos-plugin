@@ -18,9 +18,8 @@ Discover the intended thermostat and its declared capabilities from [the directo
 
 - `endpoint_query` finds the thermostat. Ask for its thermostat and temperature-sensor expansions with `forceDeviceAttributeQuery: true`. The room temperature is the temperature-sensor reading, never the setpoint.
 - `control` sends the declared setpoint or mode command with its documented payload. For a relative change such as "a bit warmer", start from a fresh current setpoint, and ask for a target when none is available.
-- After the command, read the thermostat again the same way, then call `endpoint_show` with its exact endpoint ID so the customer sees the new setpoint next to the room temperature. Answer in a sentence or two next to the card; never draw your own card.
+- Ordinary absolute setpoint/mode commands use `waitForResult: false`; acknowledge accepted/pending and stop. Read again only for requested verification or uncertain-outcome diagnosis. Use `endpoint_show` when the customer asks for a card or controls; never draw your own card.
 
 ## Use the HTTP API
 
 Use [authorized REST dispatch](https://portoperatingsystem.com/docs/for-ai/guides/quickstart.md). Read fresh mode/setpoint/temperature observations after the command. A committed target setting does not prove the room has reached that temperature. Report delayed or unavailable observations honestly and do not repeat relative adjustments after an unknown response.
-

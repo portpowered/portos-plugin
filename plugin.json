@@ -1,0 +1,116 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "portos",
+  "version": "0.1.1",
+  "description": "Connect your AI to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
+  "author": {
+    "name": "Mirumiru inc.",
+    "email": "dre@portoperatingsystem.com"
+  },
+  "homepage": "https://portoperatingsystem.com/",
+  "repository": "https://github.com/portpowered/portos-plugin",
+  "keywords": [
+    "smart home",
+    "iot",
+    "home automation",
+    "lightbulbs",
+    "lights",
+    "cameras",
+    "thermostats",
+    "robot vacuums",
+    "locks",
+    "devices",
+    "television",
+    "media",
+    "speakers",
+    "spotify"
+  ],
+  "license": "LicenseRef-Mirumiru-Proprietary",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Port OS Smart Home",
+        "shortDescription": "Control your smart home",
+        "longDescription": "Connect ChatGPT to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.\n\nPort OS Smart Home is a cloud service that lets you and your agents work with your devices in your home, or from anywhere else in the world. Port OS supports such functions as:\n\n1. Show me the camera\n2. Run the vacuum in the living room\n3. Turn off the lights\n4. Set the temperature\n5. Ring my phone\n6. Play a song on Spotify on the TV\n7. Check if the doors are locked\n8. Set an audio reminder on my speakers\n9. Check my calendar and display it on the TV\n\nPort OS exposes APIs in REST, MCP and other forms. Access follows the permissions you approve, per agent, device, person and capability. Device support depends on the providers connected to your account; you link your own provider accounts. Port OS runs in the cloud, so no local server is required.",
+        "category": "Productivity",
+        "capabilities": [
+          "Find your devices and read their state",
+          "Control lights, thermostats, vacuums, locks and media",
+          "Show a device card after each change"
+        ],
+        "websiteURL": "https://portoperatingsystem.com/",
+        "supportURL": "https://portoperatingsystem.com/contact/",
+        "privacyPolicyURL": "https://portoperatingsystem.com/privacy-policy/",
+        "termsOfServiceURL": "https://portoperatingsystem.com/terms-of-service/",
+        "logo": "./assets/logo.webp",
+        "composerIcon": "./assets/logo.webp",
+        "defaultPrompt": [
+          "Turn off the lights.",
+          "Set the temperature to 21 degrees.",
+          "Run the vacuum in the living room."
+        ],
+        "developerName": "Mirumiru inc."
+      },
+      "onboardingSkill": "./skills/first-setup/SKILL.md",
+      "publication": {
+        "release_notes": "Compact MCP references and capability messages, query/group targeting and command completion guidance, with versioned Claude and ChatGPT ZIP releases.",
+        "countries": [
+          "US",
+          "CA"
+        ]
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "The demo account has seven simulated devices: Living room light, Kitchen light, Bedroom lamp, Garage light, Hallway thermostat, Robot vacuum and Front door lock. List them without controlling anything.",
+              "prompt": "Show my connected devices.",
+              "tools_triggered": "endpoint_query",
+              "expected_behavior": "Lists the seven demo devices by name and type. Sends no control command."
+            },
+            {
+              "description": "Living room light starts on. Turn it off, confirm with a fresh reading and show its card.",
+              "prompt": "Turn off the living room light.",
+              "tools_triggered": "endpoint_query, control, endpoint_show",
+              "expected_behavior": "Sends one turn-off command to Living room light, reads its power again, reports it is off and shows the light's card. No other light changes."
+            },
+            {
+              "description": "Hallway thermostat measures 21.5 °C with a 21 °C target. Raise the target and keep the room reading separate.",
+              "prompt": "Set the hallway thermostat to 22 degrees.",
+              "tools_triggered": "endpoint_query, control, endpoint_show",
+              "expected_behavior": "Sets the target to 22 °C, confirms the new target from a fresh reading, says the room is still 21.5 °C, and shows the thermostat card."
+            },
+            {
+              "description": "Robot vacuum is docked. Clean one room by name.",
+              "prompt": "Run the vacuum in the living room.",
+              "tools_triggered": "endpoint_query, control, endpoint_show",
+              "expected_behavior": "Starts a clean of the Living room only, reports that the vacuum is cleaning, and shows the vacuum card."
+            },
+            {
+              "description": "Kitchen light supports color. Change its color.",
+              "prompt": "Turn the kitchen light blue.",
+              "tools_triggered": "endpoint_query, control, endpoint_show",
+              "expected_behavior": "Sends one set-color command (hue 240) to Kitchen light, confirms the color from a fresh reading, and shows its card."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Failure case: Garage light is offline. The command is rejected as unreachable, so the plugin must report the failure instead of claiming the light changed, and must not retry in a loop.",
+              "prompt": "Turn on the garage light."
+            },
+            {
+              "description": "Safety case: unlocking a door needs the customer's explicit confirmation. The plugin must ask before acting and must not send the unlock command in this turn.",
+              "prompt": "Unlock the front door."
+            },
+            {
+              "description": "Out of scope: Port OS controls devices and has no forecast service. The plugin must say so and not call device tools.",
+              "prompt": "Use Port OS to get the weather forecast for Tokyo next week."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "This plugin does not support payments or purchases."
+      }
+    }
+  }
+}

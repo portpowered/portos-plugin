@@ -6,12 +6,20 @@ metadata:
   guide-id: managing-groups
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 8
+  last modified: 2026, october, 25
 ---
 
 # Manage groups and membership
 
-Use [group operation references](https://portoperatingsystem.com/docs/for-ai/operations/index.md), group:read for discovery and group:manage plus resource policy for changes. Copy full IDs. Names are labels and may not be unique.
+Read with `group_query` (`group:read`); change with `group_manage` (`group:manage`
+plus resource permission). Keep full IDs and account; clarify ambiguous names.
 
-Inspect nested membership, preserve relationship meaning and deduplicate targets. Rename, merge, add/remove members only through declared operations. Use documented idempotency and ETags/version checks. On concurrent edits, retrieve current state and resolve the conflict rather than overwrite it. Native media groups and spatial cleaning targets are different concepts; see [vacuum guidance](https://portoperatingsystem.com/docs/for-ai/guides/vacuums.md).
+1. Inspect nested membership, preserve relationships and deduplicate endpoints.
+2. Use declared rename, merge and membership operations, current etags and documented
+   idempotency. After conflicts, reread and resolve; never overwrite.
+3. Before any `group_manage` change, read
+   [Provider synchronization and outcomes](https://portoperatingsystem.com/docs/for-ai/guides/provider-group-sync.md)
+   including its move example.
 
+Native media groups and spatial cleaning targets differ; see
+[vacuum guidance](https://portoperatingsystem.com/docs/for-ai/guides/vacuums.md).
