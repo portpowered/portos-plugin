@@ -32,7 +32,16 @@ For Claude Code, install from the plugin-only GitHub repository:
 /plugin install portos --marketplace portpowered/portos-plugin
 ```
 
-In ChatGPT or Codex, install Port OS Smart Home from the plugin directory.
+For Codex, install the complete public plugin, including its skills and remote MCP connection:
+
+```text
+codex plugin marketplace add portpowered/portos-plugin --ref v0.1.2 --json
+codex plugin add portos@portos --json
+```
+
+For ChatGPT, use the ChatGPT ZIP from
+[GitHub Releases](https://github.com/portpowered/portos-plugin/releases) in a
+supported plugin-upload flow. Public-directory installation requires approval.
 
 Either install adds the skills and the cloud connection
 configuration. It does not start a local server or complete account authorization.
@@ -72,8 +81,9 @@ Download the platform ZIP and `SHA256SUMS` from
 
 - `portos-claude-<version>.zip`: native Claude plugin with `.claude-plugin/plugin.json` at its root, for Claude hosts supporting plugin ZIP installation.
 - `portos-chatgpt-<version>.zip`: portable Agent Plugins package with `plugin.json` and `mcp.json` at its root, for upload at [OpenAI Plugins](https://platform.openai.com/plugins).
+- `portos-codex-<version>.zip`: native Codex package with the same skills and a remote MCP config compatible with the Codex plugin loader. The public Git marketplace uses this config too.
 
-Both include the same skills, assets and remote service. Neither ZIP contains
+All three include the same skills, assets and remote service. No ZIP contains
 marketplace metadata, workflows, credentials or a local server. Directory
 approval and availability are separate from downloading or uploading a package.
 Claude Code users can continue to install from the marketplace command above.
@@ -94,6 +104,10 @@ In the development monorepo, run `make -C plugins/portos build`. Versioned ZIPs
 and checksums appear under `dist/assistant-plugins/releases/`.
 
 ## Distribution and verification
+
+Maintainers: follow [the release procedure](https://github.com/portpowered/portos-plugin/blob/main/RELEASING.md) for local generation,
+preview, the reviewed-main push to this repository, GitHub workflow artifacts,
+and the separate OpenAI and Claude submission steps.
 
 This source provides OpenAI portable and Claude native manifests over the same
 cloud service and skills. The Port OS development repository validates and exports the platform packages from shared Markdown skills. Other Port OS repositories are listed at [portpowered/index](https://github.com/portpowered/index). This plugin-only distribution contains the remote connection configuration, skills and listing assets.

@@ -3,7 +3,7 @@ import { cp, lstat, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/prom
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { validateCloudConfig, validateOpenAIListing, validateInventory, validatePortableAuth } from './pluginPackage.mjs';
+import { validateCloudConfig, validateCodexConfig, validateOpenAIListing, validateInventory, validatePortableAuth } from './pluginPackage.mjs';
 import { zipDirectory } from './zipDirectory.mjs';
 
 // Runs both in the monorepo and the exported plugin repository. Only the
@@ -19,22 +19,24 @@ export async function packagePluginRelease(source, output) {
   if (portable.name !== 'portos' || claude.name !== portable.name ||
       !/^\d+\.\d+\.\d+$/.test(portable.version) || claude.version !== portable.version)
     throw new Error('Platform identities and semantic versions must agree.');
-  validateCloudConfig(await json('mcp.json'), 'streamable-http');
+  validateCloudConfig(await json('chatgpt.mcp.json'), 'streamable-http');
+  validateCodexConfig(await json('codex.mcp.json'));
   validateCloudConfig(await json('.mcp.json'), 'http');
   validateOpenAIListing(portable.extensions['com.openai']);
-  validatePortableAuth(await json('mcp.json'));
+  validatePortableAuth(await json('chatgpt.mcp.json'));
   await mkdir(output, { recursive: true });
   const stage = await mkdtemp(path.join(tmpdir(), 'portos-plugin-release-'));
   const assets = [];
   try {
-    for (const platform of ['claude', 'chatgpt']) {
+    for (const platform of ['claude', 'chatgpt', 'codex']) {
       const directory = path.join(stage, platform);
       const files = ['skills', 'assets', 'README.md', 'LICENSE.md',
-        ...(platform === 'claude' ? ['.claude-plugin/plugin.json', '.mcp.json'] : ['plugin.json', 'mcp.json'])];
+        ...(platform === 'claude' ? ['.claude-plugin/plugin.json', '.mcp.json'] : ['plugin.json'])];
       for (const name of files) {
         await validateInventoryPath(path.join(source, name));
         await cp(path.join(source, name), path.join(directory, name), { recursive: true });
       }
+      if (platform !== 'claude') await cp(path.join(source, `${platform}.mcp.json`), path.join(directory, 'mcp.json'));
       await validateInventory(directory);
       const name = `portos-${platform}-${portable.version}.zip`;
       const bytes = zipDirectory(directory);

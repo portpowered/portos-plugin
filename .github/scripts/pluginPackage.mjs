@@ -67,3 +67,12 @@ export function validatePortableAuth(config) {
   if (JSON.stringify(auth).includes('clientSecret') || JSON.stringify(auth).includes('clientId'))
     throw new Error('CIMD configuration cannot embed client credentials.');
 }
+
+// Codex's native plugin loader accepts the remote transport fields, but rejects
+// ChatGPT portal OAuth extensions before it can perform OAuth discovery.
+export function validateCodexConfig(config) {
+  validateCloudConfig(config, 'streamable-http');
+  if (config.$schema !== 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json' ||
+      Object.keys(config.mcpServers.portos).some(key => !['type', 'url'].includes(key)))
+    throw new Error('Codex MCP configuration must contain only the remote type and URL.');
+}

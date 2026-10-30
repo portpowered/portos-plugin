@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "portos": {
+      "type": "streamable-http",
+      "url": "https://api.portoperatingsystem.com/mcp",
+      "extensions": {
+        "com.openai": {
+          "auth": {
+            "type": "oauth",
+            "client": {
+              "mode": "cimd"
+            },
+            "resource": "https://api.portoperatingsystem.com/mcp",
+            "baseScopes": [
+              "endpoint:read"
+            ],
+            "defaultScopes": [
+              "endpoint:read",
+              "message:send",
+              "group:read"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

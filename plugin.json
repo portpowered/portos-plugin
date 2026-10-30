@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "portos",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Connect your AI to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "author": {
     "name": "Mirumiru inc.",
@@ -53,7 +53,7 @@
       },
       "onboardingSkill": "./skills/first-setup/SKILL.md",
       "publication": {
-        "release_notes": "Compact MCP references and capability messages, query/group targeting and command completion guidance, with versioned Claude and ChatGPT ZIP releases.",
+        "release_notes": "Native Codex MCP configuration, separate ChatGPT CIMD and Claude packages, reproducible release ZIPs and full-artifact installation checks.",
         "countries": [
           "US",
           "CA"
