@@ -4,6 +4,10 @@ Connect Claude, ChatGPT or Codex to your existing smart home devices from Philip
 
 Port OS Smart Home is a cloud service that lets you and your agents work with your devices in your home, or from anywhere else in the world.
 
+Use it in ChatGPT on the web or desktop, and in Codex. The OpenAI package
+explicitly sets `requires_local_executor` to `false`: its MCP server is hosted
+by Port OS, with no local server, command or desktop runtime required.
+
 Port OS supports such functions as:
 
 1. Show me the camera

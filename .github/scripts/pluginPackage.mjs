@@ -19,6 +19,8 @@ const categories = ['Productivity', 'Creativity', 'Developer Tools', 'Business &
 // OpenAI's final directory submission rules (developers.openai.com/plugins/deploy/submission-errors), checked
 // here because the portal accepts an upload that final submission later rejects.
 export function validateOpenAIListing(extension) {
+  if (extension.requires_local_executor !== false)
+    throw new Error('Port OS must explicitly support hosted execution; requires_local_executor must be false.');
   const { interface: listing, review, publication } = extension;
   const line = (value, max, field) => {
     if (typeof value !== 'string' || !value.trim() || /[\r\n]/.test(value) || value.length > max) throw new Error(`${field} must be one non-empty line of at most ${max} characters.`);
