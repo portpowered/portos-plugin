@@ -53,7 +53,7 @@ export async function packagePluginRelease(source, output) {
         manifest.extensions['com.openai'].interface.displayName += ' QA';
         validateOpenAIListing(manifest.extensions['com.openai']);
         await writeFile(path.join(directory, 'plugin.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-        await writeFile(path.join(directory, '.app.json'), `${JSON.stringify({ apps: { portos: { id: qa.appId } } }, null, 2)}\n`);
+        await writeFile(path.join(directory, '.app.json'), `${JSON.stringify({ apps: { portos: { id: qa.appId, required: true } } }, null, 2)}\n`);
         const mcp = await json('chatgpt.mcp.json');
         const auth = mcp.mcpServers.portos.extensions['com.openai'].auth;
         auth.baseScopes = qa.scopes;

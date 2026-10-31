@@ -101,10 +101,15 @@ Claude Code users can continue to install from the marketplace command above.
 
 Maintainers configure `qa.json` with the ChatGPT-accessible QA `appId` and the
 separate Portal `submissionAppId`, plus the QA `scopes`. These IDs are references, not OAuth
-credentials; each tester must connect their own Port OS account. An unpublished
+credentials; each tester must connect their own Port OS account. The QA registration
+must remain available to the installing ChatGPT account. Deleting it breaks
+installation of every QA ZIP bound to it with "Couldn't load connector". Restore
+the registration and rebuild against its new verified App ID; a ZIP cannot
+recreate a deleted registration or grant another account access to it. An unpublished
 Portal App is not automatically available in ChatGPT. Updating the Portal draft
 does not automatically update an installed private QA plugin.
-Use the matching versioned QA ZIP and verify its tools in a fresh chat.
+Upload the matching versioned QA ZIP, complete **Install plugin**, then verify
+its tools in a fresh chat. Updating an installed plugin does not test a fresh install.
 
 Every push to the plugin repository's main branch builds downloadable workflow
 artifacts. A `v<version>` tag or a manual run of **Plugin release packages** from

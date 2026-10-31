@@ -140,23 +140,42 @@ submission handoff. Backend deployment and directory approval are separate.
    The archive keeps the public version,
    skills, assets, endpoint and CIMD method. Its binding, QA display name and
    full QA scope lists differ from the public archive.
-3. Update the existing private QA plugin with that archive. Preserve its plugin
-   identity and private audience. Never submit the QA ZIP for directory review.
+3. Before packaging a release, open the QA registration's page in the target
+   ChatGPT account and verify it is available. An App ID passing JSON validation
+   does not prove availability. Keep this registration installed: deleting it
+   breaks every released QA ZIP referencing it with **Couldn't load connector**.
+   If it is unavailable, register the connection again, record the actual new
+   App ID in `qa.json`, bump the package version and rebuild. For another tester
+   account, make the registration available through supported workspace controls
+   or register that account's own connection and build its bound QA variant.
+   Never submit the QA ZIP for directory review.
+4. Upload the downloaded QA release ZIP in ChatGPT and click **Install plugin**
+   on the newly imported plugin. Verify that installation finishes and its App
+   is connected. Updating an already installed wrapper is a separate upgrade
+   check and cannot pass fresh-install acceptance. Preserve the existing QA
+   plugin's identity and private audience when testing an upgrade.
    After creating or reconnecting the QA registration, open its ChatGPT settings
    and run **Manage app → Refresh tools**. Discovery can advertise a tool before
    the host can call it; `Unknown tool` is a failed check, not an empty result.
-4. Start a fresh ChatGPT chat and select the QA plugin. Check its setup skill,
+5. Start a fresh ChatGPT chat and select the newly installed QA plugin. Check its setup skill,
    callable tools and a read-only device query. Verify a usable authorization
    action with a tester account that has no existing grant, then inspect the
    consent scopes and complete sign-in. Existing grants may suppress consent.
    Exercise endpoint, group and subscription reads separately. If a newly
    registered tool returns `Unknown tool`, refresh the registration metadata and
    retry once, retaining both the failure and the successful invocation evidence.
-5. Confirm listing, composer and device-card images in ChatGPT. Record the
+6. Confirm listing, composer and device-card images in ChatGPT. Record the
    public and QA archive version, Portal App ID and exercised host behavior.
    Skill loading, a Portal scan or a query through another connector is not
    acceptance. Repeat installation from the real public listing after publication;
    private QA does not establish that the public installation path works.
+
+The package sets both `author.name` and `interface.developerName` to
+**Mirumiru inc.** The public directory uses the verified publisher identity
+selected in the Portal. Personal imports currently show the ChatGPT account
+owner as developer, even when the archive specifies the company. Do not change
+the account's personal profile to disguise this host behavior; verify the company
+publisher in the public draft separately.
 
 An unpublished Portal App is not automatically available to the ChatGPT account.
 Use [OpenAI's connection test flow](https://developers.openai.com/plugins/deploy/connect-chatgpt)

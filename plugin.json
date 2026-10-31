@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "portos",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Connect your AI to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "author": {
     "name": "Mirumiru inc.",
@@ -54,7 +54,7 @@
       },
       "onboardingSkill": "./skills/first-setup/SKILL.md",
       "publication": {
-        "release_notes": "Ship a reproducible ChatGPT QA package bound to a verified registration with the complete standard CIMD scope set, alongside public ChatGPT, Codex and Claude packages with a shared PNG brand icon.",
+        "release_notes": "Repair the unavailable QA registration, require its connection explicitly, and verify a fresh release ZIP installation through authenticated device, group and subscription reads. Keep Mirumiru inc. publisher metadata and the complete standard CIMD scopes.",
         "countries": [
           "US",
           "CA"
