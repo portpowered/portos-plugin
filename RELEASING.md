@@ -11,7 +11,7 @@ and hosted MCP connection for ChatGPT/Codex and Claude.
 ## Scope
 
 The monorepo owns source, validators and the exported release workflow. This
-process covers three host archives, the public repository and platform
+process covers three public host archives, a bound ChatGPT QA archive, the public repository and platform
 submission handoff. Backend deployment and directory approval are separate.
 
 ## Prerequisites
@@ -41,11 +41,18 @@ submission handoff. Backend deployment and directory approval are separate.
 
 4. Inspect `dist/assistant-plugins/releases/`. It contains
    `portos-chatgpt-<version>.zip`, `portos-codex-<version>.zip`,
-   `portos-claude-<version>.zip` and `SHA256SUMS`.
+   `portos-claude-<version>.zip`, `portos-chatgpt-qa-<version>.zip` and `SHA256SUMS`.
    ChatGPT and Codex get `plugin.json` and host-specific `mcp.json`; Claude gets
    `.claude-plugin/plugin.json` and `.mcp.json`. All include shared skills and
    assets. Repository workflows, maintainer docs, Git, credentials and backend
    source are excluded from installation ZIPs.
+   The QA archive adds `.app.json` and its manifest reference, and labels the
+   display name with `QA`. `plugins/portos/qa.json` records the ChatGPT-accessible
+   QA `appId` and separate Portal `submissionAppId`. Verify both identities
+   before releasing. An App ID is not a credential. The PNG brand icon is shared
+   by all packages and fits ChatGPT's custom-connection icon upload requirements.
+   The build fails if that configuration is missing or invalid. Public archives
+   never include the QA binding or `qa.json`.
 5. Commit the source changes and run a preview:
 
    ```sh
@@ -73,7 +80,7 @@ submission handoff. Backend deployment and directory approval are separate.
    records the full source commit. It does not deploy the backend or submit a
    listing to either platform directory.
 3. Inspect the [public workflow runs](https://github.com/portpowered/portos-plugin/actions/workflows/release-plugin.yml).
-   Every main push produces a downloadable artifact containing all three ZIPs and
+   Every main push produces a downloadable artifact containing all four ZIPs and
    checksums. The workflow runs in the public repository, not the monorepo.
 4. Publish a versioned GitHub release with either a matching `v<version>` tag
    on the public commit or a manual run from the public `main`:
@@ -122,6 +129,56 @@ submission handoff. Backend deployment and directory approval are separate.
    the approved package version. GitHub publication does not perform these steps.
 4. Metadata or skill updates need a new ZIP. Hosted tool changes use MCP scans;
    after a backend deployment use **MCPs → Rescan** and inspect the results.
+
+### Test the submission with the release QA variant
+
+1. Upload the public `portos-chatgpt-<version>.zip` as a new version of the
+   existing Portal draft, preserving its registered App and verified publisher.
+   Complete CIMD/OAuth connection setup and inspect the discovered tools.
+2. Download the matching `portos-chatgpt-qa-<version>.zip` and verify its checksum.
+   Confirm `.app.json` references the verified QA registration in `qa.json`.
+   The archive keeps the public version,
+   skills, assets, endpoint and CIMD method. Its binding, QA display name and
+   full QA scope lists differ from the public archive.
+3. Update the existing private QA plugin with that archive. Preserve its plugin
+   identity and private audience. Never submit the QA ZIP for directory review.
+   After creating or reconnecting the QA registration, open its ChatGPT settings
+   and run **Manage app → Refresh tools**. Discovery can advertise a tool before
+   the host can call it; `Unknown tool` is a failed check, not an empty result.
+4. Start a fresh ChatGPT chat and select the QA plugin. Check its setup skill,
+   callable tools and a read-only device query. Verify a usable authorization
+   action with a tester account that has no existing grant, then inspect the
+   consent scopes and complete sign-in. Existing grants may suppress consent.
+   Exercise endpoint, group and subscription reads separately. If a newly
+   registered tool returns `Unknown tool`, refresh the registration metadata and
+   retry once, retaining both the failure and the successful invocation evidence.
+5. Confirm listing, composer and device-card images in ChatGPT. Record the
+   public and QA archive version, Portal App ID and exercised host behavior.
+   Skill loading, a Portal scan or a query through another connector is not
+   acceptance. Repeat installation from the real public listing after publication;
+   private QA does not establish that the public installation path works.
+
+An unpublished Portal App is not automatically available to the ChatGPT account.
+Use [OpenAI's connection test flow](https://developers.openai.com/plugins/deploy/connect-chatgpt)
+to register the canonical MCP URL in ChatGPT for QA, selecting CIMD, matching
+the QA package's base/default scopes, and uploading the shared PNG icon. Record its
+verified App ID as `appId`, while retaining the Portal **MCPs → Associated app**
+as `submissionAppId`. The release QA plugin must bundle all skills and invoke
+that QA registration; testing the connection alone is insufficient. Do not
+claim that a working QA registration proves Portal draft access or public listing
+installation. A saved binding that does not expose tools fails host acceptance.
+
+QA uses every standard CIMD client scope: `endpoint:read`, `endpoint:write`,
+`message:send`, `group:read`, `group:manage`, `subscription:read` and
+`subscription:write`. `qa.json` owns this list; the QA archive requests it as
+both base and default scopes, and the registered QA connection must match.
+Verify all seven permissions on the consent page and complete authorization.
+This grants access for QA; it does not authorize unrequested device commands.
+The public package retains its smaller normal defaults. When the backend's
+CIMD allowlist changes, update the QA scope list and its archive regression test
+together. ChatGPT does not expose an OAuth scope editor for the existing custom
+registration in the current UI; a replacement registration may be needed to
+change its configured scopes. Preserve the submission's App identity.
 
 Port OS declares `extensions.com.openai.requires_local_executor: false`; its
 remote server and skills require no local process. Imported MCP packages can
@@ -203,7 +260,8 @@ an explicitly selected test account or simulator, with state restored afterward.
 
 - [ ] Both manifests and the tag match the packaged semantic version.
 - [ ] Public commits identify the exact reviewed monorepo source.
-- [ ] All three ZIPs pass CRC, checksum and platform-manifest checks.
+- [ ] All four ZIPs pass CRC, checksum and platform-manifest checks.
+- [ ] The QA ZIP binds the verified ChatGPT QA App; public ZIPs contain no App binding.
 - [ ] Published downloads match the pinned-runtime rebuild.
 - [ ] A fresh native host loads the installed full artifact's skills and MCP server, completes OAuth and performs read-only discovery.
 - [ ] Directory submission, approval, OAuth and host acceptance are recorded separately.

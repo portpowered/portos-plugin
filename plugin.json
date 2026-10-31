@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "portos",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "description": "Connect your AI to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "author": {
     "name": "Mirumiru inc.",
@@ -43,8 +43,8 @@
         "supportURL": "https://portoperatingsystem.com/contact/",
         "privacyPolicyURL": "https://portoperatingsystem.com/privacy-policy/",
         "termsOfServiceURL": "https://portoperatingsystem.com/terms-of-service/",
-        "logo": "./assets/logo.webp",
-        "composerIcon": "./assets/logo.webp",
+        "logo": "./assets/logo.png",
+        "composerIcon": "./assets/logo.png",
         "defaultPrompt": [
           "Turn off the lights.",
           "Set the temperature to 21 degrees.",
@@ -54,7 +54,7 @@
       },
       "onboardingSkill": "./skills/first-setup/SKILL.md",
       "publication": {
-        "release_notes": "Document registered ChatGPT web connections and verify complete host packages, with explicit hosted execution and native Codex and Claude installation.",
+        "release_notes": "Ship a reproducible ChatGPT QA package bound to a verified registration with the complete standard CIMD scope set, alongside public ChatGPT, Codex and Claude packages with a shared PNG brand icon.",
         "countries": [
           "US",
           "CA"

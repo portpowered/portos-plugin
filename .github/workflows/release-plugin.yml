@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24.21.0'
-      - name: Build all three installable ZIPs
+      - name: Build public packages and the bound ChatGPT QA variant
         id: package
         shell: bash
         run: |
@@ -36,15 +36,15 @@ jobs:
           echo "version=$(jq -r '.version' release-metadata.json)" >> "$GITHUB_OUTPUT"
           echo "source=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           (cd dist && sha256sum --check SHA256SUMS)
-          unzip -t dist/portos-claude-*.zip
-          unzip -t dist/portos-chatgpt-*.zip
-          unzip -t dist/portos-codex-*.zip
+          for archive in dist/*.zip; do unzip -t "$archive"; done
           {
             printf '# Port OS %s packages\n\n' "$(jq -r '.version' release-metadata.json)"
             printf 'Source commit: `%s`\n\n' "$GITHUB_SHA"
+            printf 'ChatGPT QA App: `%s`\n\nPortal submission App: `%s`\n\n' "$(jq -r '.qaAppId' release-metadata.json)" "$(jq -r '.submissionAppId' release-metadata.json)"
+            printf 'QA consent scopes: `%s`\n\n' "$(jq -r '.qaScopes | join(", ")' release-metadata.json)"
             printf '| Platform archive | SHA-256 | Bytes |\n| --- | --- | --- |\n'
             jq -r '.assets[] | "| \(.name) | `\(.sha256)` | \(.bytes) |"' release-metadata.json
-            printf '\nDownload the Claude, ChatGPT and Codex ZIPs and SHA256SUMS from this run’s artifact. A matching version tag or manual main run publishes a GitHub release; platform-directory submission is separate. See RELEASING.md.\n'
+            printf '\nDownload the Claude, ChatGPT, Codex and private ChatGPT QA ZIPs and SHA256SUMS. The QA ZIP binds the ChatGPT QA registration; never submit it for public review. A matching version tag or manual main run publishes a GitHub release; platform-directory submission is separate. See RELEASING.md.\n'
           } >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -88,7 +88,7 @@ jobs:
               actual=$(gh api "repos/$GH_REPO/commits/$tag" --jq .sha)
               [[ "$actual" == "$SOURCE_SHA" ]] || { echo 'Tag points to a different commit.' >&2; exit 1; }
             fi
-            printf '%s\n' "Install the host-specific Claude or Codex package, or upload the ChatGPT ZIP at platform.openai.com/plugins. See RELEASING.md for native marketplace installation. Directory approval is separate." "" "Source: $SOURCE_SHA. Check SHA256SUMS before installation." > release-notes.txt
+            printf '%s\n' "Install the host-specific Claude or Codex package, or upload the ChatGPT ZIP at platform.openai.com/plugins. The ChatGPT QA ZIP binds a verified QA registration for private testing and must not be submitted for public review. See RELEASING.md. Directory approval is separate." "" "Source: $SOURCE_SHA. Check SHA256SUMS before installation." > release-notes.txt
             gh release create "$tag" --target "$SOURCE_SHA" --draft --title "Port OS $PLUGIN_VERSION" --notes-file release-notes.txt
           fi
           mkdir remote-assets

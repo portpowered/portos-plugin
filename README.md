@@ -45,7 +45,7 @@ For Claude Code, install from the plugin-only GitHub repository:
 For Codex, install the complete public plugin, including its skills and remote MCP connection:
 
 ```text
-codex plugin marketplace add portpowered/portos-plugin --ref v0.1.4 --json
+codex plugin marketplace add portpowered/portos-plugin --ref v0.1.7 --json
 codex plugin add portos@portos --json
 ```
 
@@ -92,11 +92,19 @@ Download the platform ZIP and `SHA256SUMS` from
 - `portos-claude-<version>.zip`: native Claude plugin with `.claude-plugin/plugin.json` at its root, for Claude hosts supporting plugin ZIP installation.
 - `portos-chatgpt-<version>.zip`: portable Agent Plugins package with `plugin.json` and `mcp.json` at its root, for upload at [OpenAI Plugins](https://platform.openai.com/plugins).
 - `portos-codex-<version>.zip`: native Codex package with the same skills and a remote MCP config compatible with the Codex plugin loader. The public Git marketplace uses this config too.
+- `portos-chatgpt-qa-<version>.zip`: private ChatGPT QA variant, with the same skills, assets and CIMD method plus a verified QA App binding and the complete standard CIMD scope set. Install this variant for account testing; never upload it for public directory review.
 
-All three include the same skills, assets and remote service. No ZIP contains
+All four include the same skills, assets and remote service. No ZIP contains
 marketplace metadata, workflows, credentials or a local server. Directory
 approval and availability are separate from downloading or uploading a package.
 Claude Code users can continue to install from the marketplace command above.
+
+Maintainers configure `qa.json` with the ChatGPT-accessible QA `appId` and the
+separate Portal `submissionAppId`, plus the QA `scopes`. These IDs are references, not OAuth
+credentials; each tester must connect their own Port OS account. An unpublished
+Portal App is not automatically available in ChatGPT. Updating the Portal draft
+does not automatically update an installed private QA plugin.
+Use the matching versioned QA ZIP and verify its tools in a fresh chat.
 
 Every push to the plugin repository's main branch builds downloadable workflow
 artifacts. A `v<version>` tag or a manual run of **Plugin release packages** from

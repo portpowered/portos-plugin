@@ -1,0 +1,5 @@
+{
+  "appId": "asdk_app_6ae60aec29f48191b0216f080dd752ed",
+  "submissionAppId": "asdk_app_6adec48518c48191b523ee59c1a9aa5f",
+  "scopes": ["endpoint:read", "endpoint:write", "message:send", "group:read", "group:manage", "subscription:read", "subscription:write"]
+}
