@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "portos",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "Connect your AI to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "author": {
     "name": "Mirumiru inc.",

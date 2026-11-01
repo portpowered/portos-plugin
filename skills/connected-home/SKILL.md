@@ -30,13 +30,13 @@ Read the task guide index at `references/index.md` and the relevant bundled refe
 temperature, lighting, cameras, rooms, media, battery, find-phone, files or reminders.
 These same guides are published on the website and at portos://guides/{topic}.
 If references are unavailable and the client exposes resources/read, read portos://guides/index.
-For tools-only clients without references, use the task recipes in the advertised tool descriptions; the control tool includes live music search, queue playback and append payloads. Do not assume a resource-reading bridge is available or guess undocumented command fields.
+Tools-only clients use control's music, queue and scene recipes. Other payloads require the matching guide; never assume resources/read or guess fields.
 Follow their capability, payload, verification and operation limits; never invent
 commands from product names.
 
 Each device family also has its own Port OS skill. When the Port OS plugin is
 installed, use the matching skill alongside this one; otherwise read its guide at
-https://portoperatingsystem.com/docs/for-ai/guides/<guide-id>.md. The skills are
+`https://portoperatingsystem.com/docs/for-ai/guides/{guide-id}.md`. The skills are
 lighting, thermostats, vacuums (rooms and the house map), media, cameras,
 security (locks, doorbells, security panels), kitchen (refrigerators, ovens,
 cooktops, pet feeders), sensors (air quality, humidity, contact, motion,
@@ -53,8 +53,8 @@ with each endpoint, route and item ID; clarify multiple matches before writing.
 Discovery never justifies creating connections or expanding permissions.
 
 For phone/watch battery, charging or Find My, inspect every matching candidate's
-routes. Choose a concrete authorized Apple iCloud endpoint for Apple Find My,
-not the first name, Alexa proxy, generic plugin or old unrouted record. If one
+routes. Choose a concrete authorized Apple iCloud endpoint for Apple Find My.
+A name, Alexa proxy, generic plugin or old unrouted record cannot establish that scope. If one
 match lacks data, check other route-backed candidates before denying an iCloud
 reading. Discovery never authorizes deleting or merging old records.
 
@@ -62,7 +62,7 @@ Read current state with declared endpoint_query expansions and
 forceDeviceAttributeQuery:true. Report STALE as last known state with sampledAt,
 never live or unknown; it cannot substantiate safety claims such as locked/off. Errored, missing, invalid or
 PROVIDER_NO_STATE readings mean unknown. PROVIDER_NO_STATE means the provider
-replied without an attribute value, not offline: send the requested command once
+replied without an attribute value; this does not establish offline state: send the requested command once
 and report unconfirmed. Only UNREACHABLE or ENDPOINT_UNREACHABLE (423) means offline
 and rejected. Prefer real devices; identify a selected simulator and never present
 its readings as household state. Inspect snapshot pixels before describing a scene.

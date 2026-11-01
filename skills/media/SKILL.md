@@ -12,11 +12,11 @@ metadata:
 
 # Control media playback
 
-Discover permitted media endpoints and inspect declared playback, volume and content-launcher capabilities in [the capability directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md). Use MCP `control` with the exact logical endpoint/native group ID, declared message and payload, or [REST dispatch](https://portoperatingsystem.com/docs/for-ai/guides/quickstart.md) with message/version. Port OS selects compatible routes. Search, library and queue reads need MCP `waitForResult:true` or REST `responseType:"SYNC"` for correlated results.
+Inspect authorized media endpoint/group declarations in [the capability directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md). Use MCP `control` with the returned target/message and declared payload, or [REST dispatch](https://portoperatingsystem.com/docs/for-ai/guides/quickstart.md) with message/version. Port OS selects routes. Search/library/queue reads need `waitForResult:true` or REST `responseType:"SYNC"` for correlated results. Copy media IDs unchanged: MCP accepts `m/spotify/audio/track/<id>` or full URIs. Keep signed URLs, native/session IDs and queueVersion exact.
 
-Validate units/ranges. Ordinary playback/volume commands use waitForResult:false; acknowledge acceptance and stop. Fresh-read only for requested verification, relative actions needing a current value, or uncertain outcomes. Acceptance does not prove audible playback. Recover a lost relative-command result or report unknown; never apply the increment twice.
+Validate units/ranges. Ordinary playback/volume uses waitForResult:false; acknowledge acceptance and stop. Fresh-read only for requested verification, relative actions needing current values, or uncertain outcomes. Acceptance does not prove audible playback. Recover lost relative-command results or report unknown; never repeat the increment.
 
-now-playing.active identifies the provider session's content, including while paused. Read playback-state for transport. Spotify cannot describe a separate Sonos-native session.
+now-playing.active identifies provider content even while paused; playback-state identifies transport. Spotify cannot describe Sonos-native sessions.
 
 play-uri takes {"uri":"HTTPS_AUDIO_URL"} without transcoding. Match route source kinds/formats: Sonos clips require MP3/WAV; streaming paths differ. play-audio takes {"audio":{"data":"BASE64_BYTES","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
 
@@ -42,15 +42,15 @@ call it a complete transfer.
 For recommendations, build a live queue unless asked to save it. Use existing named playlists when requested. Queues belong to player sessions; saved playlists to libraries.
 
 1. Select the unambiguous logical speaker/native group and inspect messages/configuration. Single-track `play-media` implies no queue/playlist support. Physical speakers stay singleton logical players; grouped playback uses an authorized native group. Similar names prove no identity; never fan queue writes out to members. Resolve typed target ambiguity before another control.
-2. Search the connected Spotify library with `media-search/search-media`, for example `{"query":"lo fi","type":"track"}`. Collect playable track IDs from results, optionally refining the search or traversing `get-media` children. Copy canonical IDs verbatim; never invent an ID or submit a search phrase as one.
+2. Search the connected Spotify library with `media-search/search-media`, for example `{"query":"lo fi","type":"track"}`. Collect playable track IDs from results, optionally refining the search or traversing `get-media` children. Copy returned IDs verbatim; never invent an ID or submit a search phrase as one.
 3. Check items against `media-queue` `supportedMediaResources`/`maxItemsPerPlay`. Send one `media-queue/play-queue` with `{"mediaIds":["<returned track ID>","<returned track ID>"]}`. This may interrupt playback. `queueVersion` applies only to append, never play-queue. Repeated play-media cannot simulate a queue.
 4. Acknowledge acceptance and stop. For requested contents/verification, fresh-read playback/now-playing and call `media-queue/get-queue` with `{}` on the same target. `queue-contents` separates `currentMediaId` from upcoming `mediaIds`; `complete:false` means a limited window, even if empty. Missing items are not proven absent.
 
-A failed search establishes no playback change or connection-wide failure. Preserve playback; report the failed operation and use fresh observations for state claims. Never invent playable IDs. `search-media` uses lowercase `"type":"track"`, even if configuration lists `TRACK`.
+Failed search proves no playback change or connection-wide failure. Preserve playback, report the error and fresh-read for state claims. Never invent IDs. `search-media` uses lowercase `"type":"track"`, even if configuration lists `TRACK`.
 
 Spotify may retain manually queued items when starting a new selection, and does not guarantee ordering across Player API operations. Do not promise that play-queue clears an old queue. Play-queue can explicitly activate the selected Connect target; get-queue and add-to-queue require it already active and never transfer playback.
 
-Tools-only clients use the queue recipe in `control`'s description; do not assume a resources/read bridge. Report missing guidance rather than guessing schemas.
+Tools-only clients use control's queue recipe; never assume resources/read or guess missing schemas.
 
 ## Add music and manage the queue
 
