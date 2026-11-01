@@ -12,8 +12,10 @@ metadata:
 
 # Read camera captures and streams
 
-Camera access requires both the operation scope and authorization for the selected camera/action. A light-control grant does not imply imagery access. Discover camera/snapshot capabilities from [the directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md) and use only declared message schemas.
+Camera access requires operation scope and authorization for the selected camera/action. Light-control permission grants no imagery access. Inspect declared camera/snapshot schemas in [the directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md).
 
-Prefer an on-demand capture when the user asks for a current image. Send get-snapshot with responseFormat BASE64 to receive the image inline, or URL for a short-lived Port OS link (an error says when media hosting is unavailable and BASE64 is needed). The reply carries image and timeOfSample; validate timeOfSample and, for a URL, its expiresAt. An existing capture may be old even when its download URI is new. Confirm the media is actually retrievable before describing it as viewed. If expired or stale, request a new permitted capture or explain the limitation. Streams require the declared lifecycle/transport, not an invented snapshot API.
+For packages, visitors, weather or cars, select the permitted room/outdoor camera; clarify ambiguous views. Inspect captured pixels with timeOfSample. Memory is not live evidence. Declared pan/tilt requires a follow-up snapshot; acceptance proves no movement.
+
+For current imagery, send get-snapshot with responseFormat BASE64 (inline) or URL (short-lived link). If hosting is unavailable, use BASE64. Check timeOfSample and URL expiresAt; a new link can contain an old capture. Verify retrieval before claiming to have viewed it. Recapture expired/stale images or explain the limitation. Streams use their declared lifecycle/transport.
 
 Read [authorization rules](https://portoperatingsystem.com/docs/for-ai/guides/authorization-rules.md) and [async outcomes](https://portoperatingsystem.com/docs/for-ai/guides/using-the-api.md).

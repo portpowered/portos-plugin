@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "portos",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Connect your AI to your existing smart home devices from Philips, Sonos, SmartThings and many others through the Port OS Smart Home plugin.",
   "author": {
     "name": "Mirumiru inc.",
@@ -37,7 +37,7 @@
         "capabilities": [
           "Find your devices and read their state",
           "Control lights, thermostats, vacuums, locks and media",
-          "Show a device card after each change"
+          "Show requested device cards and controls"
         ],
         "websiteURL": "https://portoperatingsystem.com/",
         "supportURL": "https://portoperatingsystem.com/contact/",
@@ -54,7 +54,7 @@
       },
       "onboardingSkill": "./skills/first-setup/SKILL.md",
       "publication": {
-        "release_notes": "Repair the unavailable QA registration, require its connection explicitly, and verify a fresh release ZIP installation through authenticated device, group and subscription reads. Keep Mirumiru inc. publisher metadata and the complete standard CIMD scopes.",
+        "release_notes": "Align camera, lighting, temperature and media guidance with verified observations, explicit verification and provider limits. Preserve the existing cloud connection, Mirumiru inc. branding and bound QA registration.",
         "countries": [
           "US",
           "CA"
@@ -71,25 +71,25 @@
             },
             {
               "description": "Living room light starts on. Turn it off, confirm with a fresh reading and show its card.",
-              "prompt": "Turn off the living room light.",
+              "prompt": "Turn off the living room light, verify it is off, and show its card.",
               "tools_triggered": "endpoint_query, control, endpoint_show",
               "expected_behavior": "Sends one turn-off command to Living room light, reads its power again, reports it is off and shows the light's card. No other light changes."
             },
             {
               "description": "Hallway thermostat measures 21.5 °C with a 21 °C target. Raise the target and keep the room reading separate.",
-              "prompt": "Set the hallway thermostat to 22 degrees.",
+              "prompt": "Set the hallway thermostat to 22 degrees, verify the target, and show its card.",
               "tools_triggered": "endpoint_query, control, endpoint_show",
               "expected_behavior": "Sets the target to 22 °C, confirms the new target from a fresh reading, says the room is still 21.5 °C, and shows the thermostat card."
             },
             {
               "description": "Robot vacuum is docked. Clean one room by name.",
-              "prompt": "Run the vacuum in the living room.",
+              "prompt": "Run the vacuum in the living room, verify it started, and show its card.",
               "tools_triggered": "endpoint_query, control, endpoint_show",
               "expected_behavior": "Starts a clean of the Living room only, reports that the vacuum is cleaning, and shows the vacuum card."
             },
             {
               "description": "Kitchen light supports color. Change its color.",
-              "prompt": "Turn the kitchen light blue.",
+              "prompt": "Turn the kitchen light blue, verify the color, and show its card.",
               "tools_triggered": "endpoint_query, control, endpoint_show",
               "expected_behavior": "Sends one set-color command (hue 240) to Kitchen light, confirms the color from a fresh reading, and shows its card."
             }

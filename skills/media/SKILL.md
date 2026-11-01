@@ -1,45 +1,64 @@
 ---
 name: media
-description: Use this guide to search and play audio, build or extend the active playback queue, save or edit playlists, pause playback, set volume or launch content on a media device.
+description: Search and play music, manage live queues or saved playlists, pause, adjust volume and launch TV content.
 metadata:
   title: Control media playback
   guide-id: media
   capabilities: media-player media-queue media-playlist media-search speaker content-launcher
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 30
+  last modified: 2026, october, 31
 ---
 
 # Control media playback
 
-Enumerate permitted media endpoints and inspect declared playback, volume and content-launcher capabilities in [the capability directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md). Select the logical endpoint or native media group only when its declarations support the requested operation. Use generic MCP `control` with the target ID, message ID from query results and exact payload, or [REST dispatch](https://portoperatingsystem.com/docs/for-ai/guides/quickstart.md) with the exact message/payload/version. Port OS selects compatible provider routes. For correlated search, library and queue reads, set MCP `waitForResult:true` or REST `responseType:"SYNC"`; an accepted receipt alone contains no read result.
+Discover permitted media endpoints and inspect declared playback, volume and content-launcher capabilities in [the capability directory](https://portoperatingsystem.com/docs/for-ai/capability-interfaces.md). Use MCP `control` with the exact logical endpoint/native group ID, declared message and payload, or [REST dispatch](https://portoperatingsystem.com/docs/for-ai/guides/quickstart.md) with message/version. Port OS selects compatible routes. Search, library and queue reads need MCP `waitForResult:true` or REST `responseType:"SYNC"` for correlated results.
 
-Absolute volume and relative volume changes have different retry behavior. Validate units/ranges. Ordinary playback and volume commands use waitForResult:false; acknowledge acceptance and stop. Query fresh observations only for requested verification, a relative action needing a current value, or uncertain-outcome diagnosis. Accepted playback is not proof of audible output. On lost relative-command responses, recover the result/read back or report unknown; do not apply the increment twice.
+Validate units/ranges. Ordinary playback/volume commands use waitForResult:false; acknowledge acceptance and stop. Fresh-read only for requested verification, relative actions needing a current value, or uncertain outcomes. Acceptance does not prove audible playback. Recover a lost relative-command result or report unknown; never apply the increment twice.
 
-For ordinary media controls on a customer-defined Port OS group, use its declared group control. Port OS selects native dispatch or the individual effective members; do not reconstruct recipients from a provider group. Queue and session writes require the selected native route's declarations and must not be emulated with per-member writes.
+now-playing.active identifies the provider session's content, including while paused. Read playback-state for transport. Spotify cannot describe a separate Sonos-native session.
+
+play-uri takes {"uri":"<HTTPS audio file URL>"} without transcoding. Match route source kinds/formats: Sonos clips accept MP3/WAV, not Ogg; streaming paths differ. play-audio takes {"audio":{"data":"<base64 bytes>","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
+
+For TV apps, inspect content-launcher/search-and-play as well as application-launcher. Use declared schemas, keys and app IDs.
+
+Use declared customer-group controls; Port OS selects native or effective-member delivery. Do not reconstruct recipients from provider groups or emulate native queue/session writes per member.
+
+Read fresh source/destination playback before `media-player/transfer-playback`
+with `{}`. It moves only the connected provider account's session. Sonos-native
+and Spotify Connect can own different sessions playing Spotify tracks; match
+provider/account and media, not names alone. An already-active Spotify destination
+conflicts because nothing moved. A receipt alone never verifies a handoff.
+
+For an authorized manual handoff, check destination `play-media` and `seek` first.
+Capture fresh source media ID/position, play that ID on the destination, then seek
+with `{"positionMilliseconds":<captured milliseconds>}` (convert seconds × 1000).
+Verify fresh destination media, position and transport before pausing the source.
+Explain missing media identity/seek and queue loss; never silently restart and
+call it a complete transfer.
 
 ## Build a live music queue
 
-For “set up a playlist of lo-fi songs and play it on my Sonos,” build a live queue unless the customer also asks to save a playlist. A playback queue belongs to the selected player session; a saved playlist belongs to a provider library.
+For “play a lo-fi playlist on Sonos,” build a live queue unless asked to save it. Queues belong to player sessions; saved playlists to provider libraries.
 
-1. Query permitted endpoints and native groups, including their messages and configurations. Select the customer's logical speaker or native group unambiguously; Port OS chooses a compatible provider. Declared single-track `play-media` does not imply playlist or queue support. Physical speakers must remain singleton logical players; select the authorized native group for grouped playback. Never infer the same physical device or group from a similar name alone or fan queue writes out to members. Resolve a typed target ambiguity before another control.
+1. Select the unambiguous logical speaker/native group and inspect messages/configuration. Single-track `play-media` implies no queue/playlist support. Physical speakers stay singleton logical players; grouped playback uses an authorized native group. Similar names prove no identity; never fan queue writes out to members. Resolve typed target ambiguity before another control.
 2. Search the connected Spotify library with `media-search/search-media`, for example `{"query":"lo fi","type":"track"}`. Collect playable track IDs from results, optionally refining the search or traversing `get-media` children. Copy canonical IDs verbatim; never invent an ID or submit a search phrase as one.
-3. Check every selected item against the target's declared `media-queue` `supportedMediaResources` and `maxItemsPerPlay`. Send one `media-queue/play-queue` with `{"mediaIds":["<returned track ID>","<returned track ID>"]}` to the logical endpoint/group. This starts the ordered selection and may interrupt current playback. `play-queue` has no `queueVersion` field; `requiresQueueVersion` applies only to `add-to-queue`. Do not simulate a queue by repeatedly calling single-item `play-media`.
-4. Acknowledge the accepted play request and stop. If the user asks for queue contents or verification, read fresh playback/now-playing on the same logical target and call `media-queue/get-queue` with `{}`. The correlated `queue-contents` result separates `currentMediaId` from upcoming `mediaIds`. `complete:false` means a provider-limited window, including when the array is empty; missing items are not proven absent. Report acknowledgement separately from confirmed playback and audible output.
+3. Check items against `media-queue` `supportedMediaResources`/`maxItemsPerPlay`. Send one `media-queue/play-queue` with `{"mediaIds":["<returned track ID>","<returned track ID>"]}`. This may interrupt playback. `queueVersion` applies only to append, never play-queue. Repeated play-media cannot simulate a queue.
+4. Acknowledge acceptance and stop. For requested contents/verification, fresh-read playback/now-playing and call `media-queue/get-queue` with `{}` on the same target. `queue-contents` separates `currentMediaId` from upcoming `mediaIds`; `complete:false` means a limited window, even if empty. Missing items are not proven absent.
 
-A failed search does not establish that the player stopped or the whole connection is unavailable. Preserve current playback and report the failed operation; use fresh Sonos observations before describing its playback state. Do not replace failed search results with remembered song names or invented playable IDs. `search-media` uses lowercase `"type":"track"`, even when capability configuration lists `TRACK`.
+A failed search establishes no playback change or connection-wide failure. Preserve playback; report the failed operation and use fresh observations for state claims. Never invent playable IDs. `search-media` uses lowercase `"type":"track"`, even if configuration lists `TRACK`.
 
 Spotify may retain manually queued items when starting a new selection, and does not guarantee ordering across Player API operations. Do not promise that play-queue clears an old queue. Play-queue can explicitly activate the selected Connect target; get-queue and add-to-queue require it already active and never transfer playback.
 
-For clients that expose only MCP tools and no bundled skills or resource reader, the `control` tool description includes this live-queue recipe and its payload fields. Use that advertised recipe rather than assuming a `resources/read` bridge exists or asking the customer for API schemas. Missing guidance for another operation is a reason to report the limitation rather than guess its payload.
+Tools-only clients use the queue recipe in `control`'s description; do not assume a resources/read bridge. Report missing guidance rather than guessing schemas.
 
 ## Add music and manage the queue
 
 For “add more like this,” inspect fresh playback and the queue, search for appropriate tracks, and send `media-queue/add-to-queue` with `{"mediaId":"<returned track ID>"}` once per desired track on the same route. Append does not restart playback. Send requests sequentially and inspect the observed queue before reporting the addition confirmed; Spotify does not guarantee ordering across separate writes. Preserve intentional repeats, and avoid adding duplicates unless requested.
 
-On a native Sonos route, `requiresQueueVersion:true` requires a fresh `get-queue` first. Copy its `queueVersion` verbatim into add-to-queue, for example `{"mediaId":"<returned track ID>","queueVersion":"<returned revision>"}`. Before a subsequent append that requires a revision, read again to obtain it. A conflict means the queue changed; inspect it and reconsider the requested addition rather than replaying it. Sonos returns complete hosted upcoming contents, preserves occurrence IDs for repeats, and refreshes the existing session without play or reload. Refresh failure can leave the append committed; the revision and contents do not prove that the player fetched or audibly played it. Native queues are bounded to 1,000 items and expire 24 hours after creation; append does not extend expiry. An external controller's queue, radio session or legacy single-track grant must not be treated as a managed native queue. Explain a missing or changed queue and get explicit intent before starting a replacement selection. Spotify does not support conditional revisions; omit queueVersion there.
+On native Sonos, `requiresQueueVersion:true` requires get-queue before each append. Copy its exact revision: `{"mediaId":"<returned track ID>","queueVersion":"<returned revision>"}`. On conflict, inspect and reconsider; never replay. Sonos returns complete hosted upcoming contents with repeat occurrence IDs and refreshes without play/reload. Failed refresh can leave an append committed, without proving the player fetched/played it. Queues hold up to 1,000 items and expire 24 hours after creation; append extends no expiry. External-controller queues, radio and legacy single-track grants are not managed queues. Explain missing/changed sessions and obtain intent before replacement. Spotify has no conditional revision; omit queueVersion.
 
-An error or timeout may leave a write applied but unconfirmed. Never automatically repeat play-queue, append, or relative transport controls. Read back and report uncertainty when the provider's bounded queue cannot establish the result. Do not claim removal, reorder, clear, shuffle or play-next support unless the selected route explicitly declares those operations. Ongoing replenishment requires an explicit customer request and supported scheduling; a queue request alone does not authorize a background loop.
+Errors/timeouts can leave writes applied but unconfirmed. Never automatically repeat queue/relative controls; read back and report uncertainty. Removal, reorder, clear, shuffle and play-next require declarations. Background replenishment needs an explicit request and supported scheduling.
 
 ## Save or edit a playlist
 

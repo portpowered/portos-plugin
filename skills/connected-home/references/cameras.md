@@ -1,5 +1,7 @@
 # Look at a kitchen camera or check a room
 
+Visual questions such as "has my package arrived?", "is it snowing outside?", or "is a car in the driveway?" call for a snapshot from the relevant permitted camera. Resolve its room or outdoor association first; a name alone does not identify the view. Inspect the returned pixels and report timeOfSample and uncertainty. Do not answer from old chat context or device state. If no declared snapshot or usable view exists, explain that limitation.
+
 "What's going on in my kitchen" can mean room-device state or camera activity. Discover kitchen endpoints and group membership with endpoint_query/group_query, checking relevant authorized accounts when the first lacks a match. Search snapshot capability and camera provider/channel aliases when a literal Kitchen name is absent. A camera's room association establishes the target; unrelated Ring/Swann channels are not proof that a kitchen camera was found. Ask the user which camera/channel if identity remains ambiguous.
 
 For a camera that declares snapshot/get-snapshot, call control with its copied full id and get-snapshot message ID, payload {"responseFormat":"BASE64"}, and waitForResult=true. Inspect the returned image pixels before describing what is visible, and report timeOfSample and uncertainty. A snapshot is not a live feed or proof that an event is occurring now. If permission, connection, provider or image retrieval fails, report the limitation without inventing a scene. Do not infer occupancy from lights or a device name.

@@ -10,6 +10,8 @@ For "turn off the lights", "dim the bedroom lamp" or "are the lights on?":
 
 Read-only light state questions need endpoint_query, not control. Editing names/groups belongs in endpoint_manage/group_manage and is a separate user task.
 
+Brightness zero does not establish power OFF. For "turn off", use the declared power/turn-off with {}. Brightness and color commands can preserve an existing OFF state; do not claim a lamp turned on from its stored brightness or color alone.
+
 After ambiguous transport failure (including HTTP 404), never automatically repeat control: even the same key can dispatch anew without a receipt. Read a known receipt via authorized GET /message-requests/{id} or fresh-read state. An authorized retry retains the key and exact arguments.
 
 ## Save and recall a room scene

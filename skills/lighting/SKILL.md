@@ -1,6 +1,6 @@
 ---
 name: lighting
-description: Use this guide to turn lights off or on, dim lights, check lighting state, and save or recall a room lighting scene. It covers native provider groups, finding the right lights, and telling lights from switches and plugs.
+description: Control lights, lamp switches/plugs and room scenes; read fresh state and handle native provider groups.
 metadata:
   title: Control lights
   guide-id: lighting
@@ -36,14 +36,16 @@ For requested inventory cleanup, label lamp plugs `LIGHT` or disable broken devi
 
 Connect your AI client with the steps in [How to use MCP](https://portoperatingsystem.com/docs/how-to-use-mcp/). Then ask your assistant to do the work, or call these tools directly:
 
-- `endpoint_query` lists devices. It returns each device's type, capabilities and message IDs. Call it without a `query` to load everything, or narrow it with a type filter such as `{"type": {"eq": "LIGHT"}}`. Pass the returned `nextToken` back until none is returned. Ask for `expand: ["power"]` to read power state, and add `forceDeviceAttributeQuery: true` to read it from the device instead of the cache.
+- `endpoint_query` returns device types, capabilities and message IDs. Narrow `query`, for example `{"type":{"eq":"LIGHT"}}`, or omit it for all permitted devices. Follow every nextToken. Use `expand:["power"]` for observations and `forceDeviceAttributeQuery:true` for a provider refresh.
 - `group_query` lists groups, their parent path, child groups and members. Use it to resolve a room to a full group ID and inspect its declared controls. A group-only search misses ungrouped lights. A name such as "Everywhere" does not establish lighting coverage; inspect the actual members and capabilities.
 - `control` sends a command with a unique `idempotencyKey` for the intended action. Choose exactly one target: copy `id` from discovery for a specific device or group, or use `query` with the same field-first filter as `endpoint_query`. Copy the declared `message`, for example the `turn-off` message of the power capability, and send `payload: {}`. A color uses `set-color` with `{"color":{"hue":240,"saturation":100,"brightness":100}}`: hue in degrees (0 to 360), saturation and brightness in percent (0 to 100). That example is blue.
 - `endpoint_show` shows a device's card when the user asks for a card or controls. Do not automatically show cards or reread state after ordinary commands. State questions and explicit verification use a fresh query with `forceDeviceAttributeQuery: true`; describe only observed state. Never draw your own card.
 - `endpoint_manage` repairs data. Its operations are `RENAME`, `SET_TYPE`, `SET_ENABLEMENT`, `MERGE_INTO` and `DELETE`. Copy the full endpoint ID from `endpoint_query`, and understand the effect before you merge or delete. A simulator endpoint can merge only into a target without a simulator route; merging two simulator endpoints returns 409 CONFLICT, so disable or delete the duplicate instead.
 - `group_manage` creates, renames, merges and deletes groups, and changes their members.
 
-Check the results to see which lights were selected, which commands were accepted, and which failed.
+Report selected, accepted and failed lights separately.
+
+Brightness zero is not power OFF; use power/turn-off with {}. Brightness/color updates can preserve OFF and cannot establish ON.
 
 Address the complete logical group. Port OS selects compatible native or equivalent member delivery after checking membership. Native capabilities and `membershipComplete` do not prove coverage. Agents supply target, message and payload; Port OS selects routes for scenes and media too.
 
