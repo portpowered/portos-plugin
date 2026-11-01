@@ -7,7 +7,7 @@ metadata:
   capabilities: power brightness color color-temperature scene
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 28
+  last modified: 2026, october, 31
 ---
 
 # Control lights
@@ -21,6 +21,8 @@ metadata:
 Confirm whether "all lights" means your whole inventory, current room or a named group, and apply that scope consistently. Include switches/plugs known to power lamps; a `LIGHT`-only filter can miss them.
 
 ## Lights, switches and plugs
+
+Use declared `set-relative-color-temperature` and `relative-color-temperature` for Tuya white settings: 0 is warmest, 100 coolest. Device-relative values cannot establish Kelvin without calibration.
 
 Discover authorized endpoints and inspect their declarations. Resolve ambiguous rooms by full ID and group path. Power support alone does not make a plug or switch a light.
 

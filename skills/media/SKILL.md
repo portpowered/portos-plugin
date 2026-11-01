@@ -18,7 +18,7 @@ Validate units/ranges. Ordinary playback/volume commands use waitForResult:false
 
 now-playing.active identifies the provider session's content, including while paused. Read playback-state for transport. Spotify cannot describe a separate Sonos-native session.
 
-play-uri takes {"uri":"<HTTPS audio file URL>"} without transcoding. Match route source kinds/formats: Sonos clips accept MP3/WAV, not Ogg; streaming paths differ. play-audio takes {"audio":{"data":"<base64 bytes>","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
+play-uri takes {"uri":"HTTPS_AUDIO_URL"} without transcoding. Match route source kinds/formats: Sonos clips require MP3/WAV; streaming paths differ. play-audio takes {"audio":{"data":"BASE64_BYTES","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
 
 For TV apps, inspect content-launcher/search-and-play as well as application-launcher. Use declared schemas, keys and app IDs.
 
@@ -27,7 +27,7 @@ Use declared customer-group controls; Port OS selects native or effective-member
 Read fresh source/destination playback before `media-player/transfer-playback`
 with `{}`. It moves only the connected provider account's session. Sonos-native
 and Spotify Connect can own different sessions playing Spotify tracks; match
-provider/account and media, not names alone. An already-active Spotify destination
+provider/account and media using returned identifiers. An already-active Spotify destination
 conflicts because nothing moved. A receipt alone never verifies a handoff.
 
 For an authorized manual handoff, check destination `play-media` and `seek` first.
@@ -39,7 +39,7 @@ call it a complete transfer.
 
 ## Build a live music queue
 
-For “play a lo-fi playlist on Sonos,” build a live queue unless asked to save it. Queues belong to player sessions; saved playlists to provider libraries.
+For recommendations, build a live queue unless asked to save it. Use existing named playlists when requested. Queues belong to player sessions; saved playlists to libraries.
 
 1. Select the unambiguous logical speaker/native group and inspect messages/configuration. Single-track `play-media` implies no queue/playlist support. Physical speakers stay singleton logical players; grouped playback uses an authorized native group. Similar names prove no identity; never fan queue writes out to members. Resolve typed target ambiguity before another control.
 2. Search the connected Spotify library with `media-search/search-media`, for example `{"query":"lo fi","type":"track"}`. Collect playable track IDs from results, optionally refining the search or traversing `get-media` children. Copy canonical IDs verbatim; never invent an ID or submit a search phrase as one.
@@ -64,4 +64,4 @@ Errors/timeouts can leave writes applied but unconfirmed. Never automatically re
 
 Only when the customer asks to save a reusable collection, use the library route's declared `media-playlist` messages: `create-playlist`, `list-playlists`, `get-playlist`, `add-to-playlist`, `remove-from-playlist`, `rename-playlist` or `unfollow-playlist`. Playlist mutations return `playlist-mutation-result`; read back contents to verify. `applied:false` can mean a playlist was created but initial tracks were not confirmed, so inspect before another write. Unfollow removes it from the account library and does not permanently delete it.
 
-Editing a saved playlist does not prove the active playback queue changed. To play a saved playlist, use `media-player/play-media` with its exact ID only on a route declaring the playlist resource kind. On a track-only queue route, read the saved playlist's children and pass their playable track IDs to play-queue within the advertised bound. Missing queue declarations, restricted Connect devices, or missing playback permission are limitations to explain; they are not permission to redirect playback.
+Verify the active queue after playlist edits. For Sonos saved playlists, use declared `list-playlists`, then `play-playlist` with its exact `playlistId` on the native group or singleton speaker. This inserts and starts the playlist, preserving the shared queue. Else use `play-media` only for an advertised playlist resource kind. On track-only routes, fetch playlist children and send playable track IDs within queue bounds. Missing declarations, restricted Connect devices or missing permissions require explanation; never redirect playback.
