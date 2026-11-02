@@ -1,0 +1,88 @@
+---
+name: connect-android-tv
+description: Use this guide when the customer wants to control a Google TV or Android TV from Port OS, install the Port OS Android TV app, pair it, or fix a TV that does not react to commands.
+metadata:
+  title: Connect an Android TV
+  guide-id: android-tv
+  slug: android-tv
+  capabilities: media-player speaker keypad-input touch-input snapshot connectivity
+  content-authorship: HUMAN_MIXED_WITH_AI
+  author: Port OS Team
+  last modified: 2026, november, 2
+---
+
+# Connect an Android TV
+
+Install the Port OS app on a Google TV or Android TV, and Port OS can play media on it, change its volume, press its remote buttons, tap its screen, take a picture of its screen and know what is playing. The TV needs no hub and no new device in the house. It does need Google Play Services, because Port OS reaches the app through Firebase Cloud Messaging (FCM), so Fire TV and TVs without Play Services are not supported. The TV must be switched on: an app on a sleeping TV cannot receive commands.
+
+An assistant helping with this guide explains the steps, but you do them on your own computer and your own TV.
+
+## Before you start
+
+- A TV running Google TV or Android TV, on the same Wi-Fi as your computer.
+- A computer with the [Android platform tools](https://developer.android.com/tools/releases/platform-tools) installed, so that `adb --version` works in your terminal.
+- A Port OS account you can sign in to on the website.
+
+## 1. Turn on developer options and wireless debugging
+
+1. On the TV open **Settings > System > About** and select **Android TV OS build** (or **Build**) seven times until the TV says developer mode is on.
+2. Open **Settings > System > Developer options** and turn on **USB debugging** and **Wireless debugging**.
+3. Open **Wireless debugging**, note the IP address and port it shows, and choose **Pair device with pairing code** if the TV asks you to pair first.
+4. On your computer connect to the TV, replacing the address with the one the TV shows:
+
+```text
+adb connect 192.168.1.50:5555
+```
+
+The TV asks you to allow the computer. Choose **Always allow**. `adb devices` lists the TV as `device` when it works.
+
+## 2. Install the app
+
+Download the app from `https://storage.googleapis.com/portos-downloads-685761720421/android-tv/portos-android-tv-latest.apk` and install it on the TV:
+
+```text
+adb install -r portos-android-tv-latest.apk
+```
+
+The app is `com.portoperatingsystem.tv`. It appears with the other apps on the TV home screen.
+
+## 3. Grant the permissions the app needs
+
+Android blocks an app in the background from opening other apps, from seeing what is playing and from pressing buttons for you, and a TV has no screen where you can grant these in the app. Run these commands once from your computer:
+
+```text
+adb shell appops set com.portoperatingsystem.tv SYSTEM_ALERT_WINDOW allow
+adb shell cmd notification allow_listener com.portoperatingsystem.tv/com.portoperatingsystem.tv.state.MediaSessionListener
+adb shell settings put secure enabled_accessibility_services com.portoperatingsystem.tv/com.portoperatingsystem.tv.control.PortOsAccessibilityService
+adb shell settings put secure accessibility_enabled 1
+```
+
+The first lets Port OS open YouTube or Spotify on the TV when you ask. The second lets the app read the active media session, so Port OS knows what is playing. The last two switch on the Port OS accessibility service, which presses the remote buttons (for example Select, to dismiss YouTube's "Who's watching?" screen), taps the screen where Port OS points (for apps such as YouTube that ignore Select on older Android versions) and takes a picture of the screen when you ask. Without them, commands still arrive, but the TV cannot start apps, Port OS cannot tell what is playing, and buttons, taps and screen pictures do not work. The app shows a setup screen that says which of them is missing and reports it to Port OS.
+
+If the TV already uses another accessibility service, run `adb shell settings get secure enabled_accessibility_services` first. When it prints something other than `null`, add the Port OS service after the existing value, separated by a colon, instead of replacing it:
+
+```text
+adb shell settings put secure enabled_accessibility_services EXISTING_SERVICE:com.portoperatingsystem.tv/com.portoperatingsystem.tv.control.PortOsAccessibilityService
+```
+
+## 4. Pair the TV with Port OS
+
+1. Open **Port OS** on the TV. It shows a code and a QR code.
+2. On your phone or computer, scan the QR code or open the address it shows, sign in to Port OS and approve the code.
+3. The TV shows that it is connected. In Port OS the TV appears under your devices with its name, for example **Living Room TV**.
+
+## 5. Try it
+
+Ask your assistant to pause the TV, change its volume, press Select on it or tell you what is playing on it. Port OS shows the TV's volume, mute state and playback state a few seconds after it changes, and the app confirms it is reachable about every ten minutes.
+
+A command succeeds when Google accepts it for delivery. The state the TV reports afterwards is what tells you whether the TV acted.
+
+## Troubleshooting
+
+- **The TV does not react to commands.** Check that the TV is on and online, then open the Port OS app once. If Port OS says the TV needs to be paired again, the app was reinstalled or its data was cleared: pair it again from step 4.
+- **Commands arrive but nothing opens.** The first permission in step 3 is missing. Run the `SYSTEM_ALERT_WINDOW` command again.
+- **Buttons or screen pictures do nothing.** The accessibility service from step 3 is not enabled. Run the two `settings put secure` commands again (keeping any other service in the list), then open the Port OS app: it says when the service is off.
+- **Port OS does not know what is playing.** The second permission in step 3 is missing. Run the `allow_listener` command again, and check that the component name is printed exactly as above.
+- **`adb: failed to connect`.** Wireless debugging reports a new port each time it is switched on. Read the address from **Developer options > Wireless debugging** again.
+- **Pairing says the code is not valid.** The code expires after a few minutes. Close the app, open it again and approve the new code.
+- **The TV disappeared from Port OS.** Delete the old connection in Port OS and pair the TV again.
