@@ -73,9 +73,15 @@ adb shell settings put secure enabled_accessibility_services EXISTING_SERVICE:co
 
 ## 5. Try it
 
-Ask your assistant to pause the TV, change its volume, press Select on it or tell you what is playing on it. Port OS shows the TV's volume, mute state and playback state a few seconds after it changes, and the app confirms it is reachable about every ten minutes.
+Ask your assistant to pause the TV, change its volume, press Select on it or tell you what is playing on it. Port OS shows the TV's volume, mute state and playback state a few seconds after it changes, the app reports every minute while something plays, and it confirms it is reachable about every fifteen minutes.
 
-A command succeeds when Google accepts it for delivery. The state the TV reports afterwards is what tells you whether the TV acted.
+For an assistant (or anyone reading the TV through the API), these are the calls that matter:
+
+- **What is playing, and in which app.** Read now-playing with a fresh query: `endpoint_query` with `endpointId`, `expand ["media-player"]` and `forceDeviceAttributeQuery true`. The TV is asked for a new reading and answers within a few seconds. Without `forceDeviceAttributeQuery` you get the last reading the TV pushed, which can be a minute or more old. now-playing names the app (`appId` such as `com.google.android.youtube.tv`, and `provider` `YOUTUBE` or `SPOTIFY`), the title (`name`), the full `portos-media` `mediaId` when the app exposes one (it is left out otherwise), and `positionMs`.
+- **Play, pause, next, previous, stop.** These `media-player` commands act on whichever app holds the active media session, YouTube or Spotify alike. If `media-player` `pause` is ambiguous because the endpoint also has another media-player route, send `keypad-input` `send-key` with `{"keyCode":"PAUSE"}` (or `PLAY`), which reaches the same session.
+- **Seek and skip.** `media-player` `seek` with `{"positionMilliseconds":90000}` jumps to that position of the current item, `skip-forward` and `skip-backward` with `{"deltaPositionMilliseconds":10000}` move that far from where it is now (the distance is required), and `start-over` with `{}` goes back to the beginning. They act on the same active session and work only when the playing app lets other apps seek (YouTube and Spotify do). Otherwise the TV logs why and nothing moves, so read now-playing `positionMs` afterwards. Needs app 0.5.2 or later.
+- **Open an app.** `application-launcher` `launch-application` with `{"catalogVendorId":0,"applicationId":"com.netflix.ninja"}` opens that Android package on the TV (catalog 0 means Android package names). The apps the TV can open are in the interface's `application-list` attribute, as package names only (no labels). An unknown or non-launchable package is not refused by the API: the delivery succeeds and the TV logs `APP_NOT_LAUNCHABLE`, so check with a `snapshot`. Needs the route rediscovered after the app updates to 0.5.2.
+- **Check that a command worked.** A command succeeds when Google accepts it for delivery, which does not mean the TV acted. Read now-playing again with `forceDeviceAttributeQuery true`, or take `snapshot` `get-snapshot` with `responseFormat: BASE64` and look at the screen. `play-media` is the same: it opens the app on the media, so confirm it is playing the same way.
 
 ## Troubleshooting
 

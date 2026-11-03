@@ -1,13 +1,13 @@
 ---
 name: media
-description: Search and play music, manage live queues or saved playlists, pause, adjust volume and launch TV content.
+description: Search and play music or videos, manage live queues or saved playlists, pause, seek, adjust volume, and control a TV (play YouTube or Spotify, see what is on, take a screenshot, open apps, press remote keys).
 metadata:
   title: Control media playback
   guide-id: media
-  capabilities: media-player media-queue media-playlist media-search speaker content-launcher
+  capabilities: media-player media-queue media-playlist media-search speaker content-launcher application-launcher keypad-input touch-input snapshot
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 31
+  last modified: 2026, november, 2
 ---
 
 # Control media playback
@@ -20,7 +20,7 @@ now-playing.active identifies provider content even while paused; playback-state
 
 play-uri takes {"uri":"HTTPS_AUDIO_URL"} without transcoding. Match route source kinds/formats: Sonos clips require MP3/WAV; streaming paths differ. play-audio takes {"audio":{"data":"BASE64_BYTES","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
 
-For TV apps, inspect content-launcher/search-and-play as well as application-launcher. Use declared schemas, keys and app IDs.
+For TV apps, inspect content-launcher/search-and-play as well as application-launcher. Use declared schemas, keys and app IDs; see [Control a TV](#control-a-tv).
 
 Use declared customer-group controls; Port OS selects native or effective-member delivery. Do not reconstruct recipients from provider groups or emulate native queue/session writes per member.
 
@@ -36,6 +36,21 @@ with `{"positionMilliseconds":<captured milliseconds>}` (convert seconds × 1000
 Verify fresh destination media, position and transport before pausing the source.
 Explain missing media identity/seek and queue loss; never silently restart and
 call it a complete transfer.
+
+## Control a TV
+
+A TV (type TELEVISION) carries its own recipe in the endpoint description; read it first. Its messages, `supportedKeys` and `supportedMediaResources` say exactly what it can do.
+
+1. **See what is on.** `endpoint_query` with the TV's `endpointId`, `expand: ["media-player"]` and `forceDeviceAttributeQuery: true`. `playbackState` is PLAYING, PAUSED or STOPPED; `nowPlaying` names the app (`appId`), the title, `provider` and `positionMs`. `appId` `com.google.android.apps.mediashell` means someone is casting to the TV: transport, seek and app launches act on their session, so ask before taking it over.
+2. **Find something to play.** Search the connected library, not the TV: `media-search/search-media` on the YouTube or Spotify endpoint with `{"query":"<what was asked>","maxResults":5}` and `waitForResult: true`. Copy a returned `mediaId` exactly. Check it against the TV's `supportedMediaResources` (for example YouTube video, channel and playlist; Spotify track, album, artist, playlist, show and episode).
+3. **Play it.** `media-player/play-media` on the TV with `{"mediaId":"<returned ID>"}`. The TV opens the provider's app on that media. A YouTube playlist made with the library's `media-playlist/create-playlist` plays the same way, with its returned `m/youtube/video/playlist/<id>`.
+4. **Confirm it.** SUCCEEDED means the TV received the command, not that it ran. Read now-playing again as in step 1, or send `snapshot/get-snapshot` with `{"responseFormat":"BASE64"}` and `waitForResult: true` and look at the screen. Without `responseFormat` the snapshot is a signed URL you cannot view. YouTube can stop on its "Who's watching?" screen: send `keypad-input/send-key` `{"keyCode":"SELECT"}`, take another snapshot, and when the picker is still there and the TV declares `touch-input`, tap the profile.
+5. **Transport.** `play`, `pause`, `next`, `previous` and `stop` with `{}` act on whichever app holds the media session. `seek` `{"positionMilliseconds":90000}` jumps to a position; `skip-forward` and `skip-backward` `{"deltaPositionMilliseconds":10000}` move from the current one (the distance is required); `start-over` `{}` goes back to the beginning. Seeking works only when the playing app allows it, so read `positionMs` afterwards.
+6. **Volume.** `speaker/set-volume` `{"volume":20}` (0 to 100), `speaker/adjust-volume` `{"volumeDelta":-5}` after reading the current `volume`, and `speaker/set-mute` `{"mute":true}`.
+7. **Open an app.** Read the `application-list` attribute (`expand: ["application-launcher"]`, `forceDeviceAttributeQuery: true`). It lists Android package names, not labels, so match the name asked for: Netflix `com.netflix.ninja`, YouTube `com.google.android.youtube.tv`, Spotify `com.spotify.tv.android`, Disney+ `com.disney.disneyplus`, Prime Video `com.amazon.amazonvideo.livingroom`, Hulu `com.hulu.livingroomplus`. Send `application-launcher/launch-application` `{"catalogVendorId":0,"applicationId":"<package>"}` and confirm with a snapshot; a package the TV cannot open fails only on the TV.
+8. **Move around the screen.** `keypad-input/send-key` takes only the keys in the route's `supportedKeys` (for example UP, DOWN, LEFT, RIGHT, SELECT, BACK, HOME, PLAY, PAUSE); a key outside them is refused. `touch-input/tap` takes `{"x":0.5,"y":0.5}` as fractions of the screen width and height; take a snapshot first to find the point and another to see the result.
+
+Errors: TARGET_UNSUPPORTED on `play-media` means the TV cannot play that media's provider or kind, and the message lists what it can; MESSAGE_UNSUPPORTED means the TV does not declare that message at all. Neither sent anything. Never repeat an accepted command to "make sure"; read the state instead.
 
 ## Build a live music queue
 

@@ -6,7 +6,7 @@ metadata:
   guide-id: skill-connected-home
   content-authorship: HUMAN_MIXED_WITH_AI
   author: Port OS Team
-  last modified: 2026, october, 25
+  last modified: 2026, november, 2
 ---
 
 # Connected home requests
@@ -51,6 +51,16 @@ Choose authorized connections by host-listed account labels. Before denying a
 missing device, check relevant authorized connections. Preserve the returning account
 with each endpoint, route and item ID; clarify multiple matches before writing.
 Discovery never justifies creating connections or expanding permissions.
+
+For a household state request without an established real-device match, a
+simulator result is a reason to continue read-only discovery in the other relevant
+authorized accounts. Do not stop at that result or ask the customer to name an
+account while an authorized household match remains unchecked. Prefer a matching
+real device and preserve its account for the fresh read. Account listing order
+and labels alone do not prove that a device is real. If the customer explicitly
+names an account or asks for a simulator, keep that scope and label simulated
+readings. If several real devices still match, identify them by account and name;
+clarify the target before a write. Never move a `me` reference between accounts.
 
 For phone/watch battery, charging or Find My, inspect every matching candidate's
 routes. Choose a concrete authorized Apple iCloud endpoint for Apple Find My.
