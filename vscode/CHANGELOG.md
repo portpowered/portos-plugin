@@ -1,5 +1,5 @@
 # Changelog
 
-## 0.1.14
+## 0.1.15
 
-Improve household discovery across authorized accounts when simulator devices are also connected. Preserve explicit account requests, account-bound device references, cloud connection, all skills, branding and existing QA scopes.
+VS Code: the extension now activates on install, shows a Connect prompt and adds the Port OS: Connect Smart Home MCP command, which starts the server and opens Port OS sign-in. Previously nothing appeared until agent mode listed tools.

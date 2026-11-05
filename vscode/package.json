@@ -1,7 +1,7 @@
 {
   "name": "portos-smart-home-mcp",
   "displayName": "Port OS Smart Home MCP",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Smart home MCP server for VS Code agent mode: control lights, thermostats, vacuums, cameras, locks and speakers from Philips Hue, Sonos, SmartThings and more. Hosted by Port OS; nothing runs locally.",
   "publisher": "portos",
   "license": "LicenseRef-Mirumiru-Proprietary",
@@ -50,7 +50,9 @@
   ],
   "main": "./extension.js",
   "icon": "icon.png",
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "files": [
     "extension.js",
     "icon.png",
@@ -76,6 +78,13 @@
       {
         "id": "portos",
         "label": "Port OS Smart Home"
+      }
+    ],
+    "commands": [
+      {
+        "command": "portos.connect",
+        "title": "Connect Smart Home MCP",
+        "category": "Port OS"
       }
     ]
   },

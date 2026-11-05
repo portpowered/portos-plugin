@@ -28,9 +28,9 @@ Requires VS Code 1.101 or later with GitHub Copilot Chat.
 
 ## Connect
 
-1. Open Copilot Chat and switch to **Agent** mode.
-2. Open the tools picker, or run **MCP: List Servers**. **Port OS Smart Home** appears under MCP servers.
-3. Start the server. VS Code opens your browser to sign in to Port OS with Google or a Website sign-in access key.
+1. Click **Connect** on the notification that appears after install, or run **Port OS: Connect Smart Home MCP** from the command palette.
+2. VS Code asks to trust the server and to let it sign in. Allow both; your browser opens to sign in to Port OS with Google or a Website sign-in access key.
+3. Back in VS Code, click **Open Agent Chat**, or open Copilot Chat in **Agent** mode yourself. **Port OS Smart Home** is listed under MCP servers in the tools picker and in **MCP: List Servers**.
 4. Review and approve the permissions. Access follows the permissions you approve, per agent, device, person and capability.
 5. Link your own provider accounts (Philips Hue, Sonos, SmartThings and others) in your Port OS account, completing any provider sign-in there.
 6. Ask "Show my connected devices" to verify discovery without controlling anything.
@@ -47,7 +47,7 @@ Port OS cannot read local computer files, buy hardware, bypass multi-factor auth
 
 ## Privacy and support
 
-The extension only declares the hosted server `https://api.portoperatingsystem.com/mcp`. It runs no other code and collects no telemetry.
+The extension declares the hosted server `https://api.portoperatingsystem.com/mcp` and adds the Connect command that starts it. It runs no other code and collects no telemetry.
 
 [Website](https://portoperatingsystem.com/) ·
 [Support](https://portoperatingsystem.com/contact/) ·
