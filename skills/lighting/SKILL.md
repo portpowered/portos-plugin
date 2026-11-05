@@ -34,19 +34,19 @@ Pick the widest target that covers the request, because one command is faster an
 
 | Request | Target |
 | --- | --- |
-| Every light in the home | One `control.query`, for example `{"type":{"in":["LIGHT","SWITCH"]}}` when LIGHT and SWITCH are known to contain only lighting |
+| Every light in the home | One `control.query`, for example `{"type":{"in":["LIGHT","SWITCH","PLUG"]}}` when every SWITCH and PLUG is named for a lamp; otherwise LIGHT plus the lamp-named switches and plugs, by name or ID |
 | A room or zone | The room's group `id` from `group_query` |
 | One named light | The device `id` from `endpoint_query` |
 
 Never copy a list of IDs, loop over single lights, or send a group command plus leftovers when one query or group covers the request. Resolve a room through `group_query` and inspect its members; matching names misses lights, and a group-only search misses ungrouped lights. A name such as "Everywhere" does not prove coverage. Native capabilities and `membershipComplete` do not prove coverage either.
 
-Port OS picks the delivery for the complete target, including a provider's native group when it covers every member, and freezes the matching devices once. A query adds no implicit exclusions, so exclude simulators, provider SELF and catalog records, appliances and duplicate copies of a device in the query itself.
+Port OS picks the delivery for the complete target, including a provider's native group when it covers every member, and freezes the matching devices once. A query adds no implicit exclusions, so exclude provider SELF and catalog records, appliances and duplicate copies of a device in the query itself. Simulated devices count like any other device.
 
 ## 3. Lights, plugs and switches
 
 Brands report lamps as LIGHT, SWITCH or PLUG. Power support alone does not make a plug or switch a light: a plug can run a fan or a router.
 
-- Include a plug or switch when it is known to power a lamp, by its type, name or the user's earlier answer.
+- Nothing marks a plug or switch as lighting. Include one when its type, name or room indicates a lamp, or the user said so earlier; a plug or switch named for an appliance is not a light.
 - When "the lights" could mean this room, the whole home or a device or group named "The lights", use the best reading from context: the room the client says the user is in, a recent request, or the only match.
 - Ask one short question when the readings would change different devices and context does not settle it. Then remember the answer for the rest of the conversation, and, if the user agrees, save it: label a lamp plug `LIGHT` with `endpoint_manage SET_TYPE`, or put lights in a group, so later requests need no question.
 - Lights shared from someone else's home are excluded by default. Include them only with an explicit owner, endpoint ID or group selector.

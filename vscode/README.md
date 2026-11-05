@@ -42,7 +42,7 @@ To activate this MCP server:
 4. Review and approve the permissions. Access follows the permissions you approve, per agent, device, person and capability.
 5. Back in VS Code, open Copilot Chat in **Agent** mode and ask "Show my connected devices" to check that Copilot sees the same devices as your dashboard, without controlling anything.
 
-If VS Code later shows a 401 or "unauthorized" error for the server, click **Start** again on **Port OS Smart Home** in the same place to sign in again.
+If VS Code shows a 401 or "unauthorized" error for the server, usually after an extension update, run **Developer: Reload Window** from the command palette, then click **Start** on **Port OS Smart Home** again. You stay signed in. If it still fails, run **Authentication: Remove Dynamic Authentication Providers**, remove the Port OS entry, and click **Start** to sign in again.
 
 You can revoke access at any time from your Port OS account.
 

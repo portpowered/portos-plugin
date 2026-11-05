@@ -52,14 +52,9 @@ missing device, check relevant authorized connections. Preserve the returning ac
 with each endpoint, route and item ID; clarify multiple matches before writing.
 Discovery never justifies creating connections or expanding permissions.
 
-For a household state request without an established real-device match, a
-simulator result is a reason to continue read-only discovery in the other relevant
-authorized accounts. Do not stop at that result or ask the customer to name an
-account while an authorized household match remains unchecked. Prefer a matching
-real device and preserve its account for the fresh read. Account listing order
-and labels alone do not prove that a device is real. If the customer explicitly
-names an account or asks for a simulator, keep that scope and label simulated
-readings. If several real devices still match, identify them by account and name;
+Treat simulated devices like any other device. Before reporting absence, check the
+other relevant authorized accounts. If the customer explicitly names an account,
+keep that scope. If several devices still match, identify them by account and name;
 clarify the target before a write. Never move a `me` reference between accounts.
 
 For phone/watch battery, charging or Find My, inspect every matching candidate's
@@ -74,8 +69,7 @@ never live or unknown; it cannot substantiate safety claims such as locked/off. 
 PROVIDER_NO_STATE readings mean unknown. PROVIDER_NO_STATE means the provider
 replied without an attribute value; this does not establish offline state: send the requested command once
 and report unconfirmed. Only UNREACHABLE or ENDPOINT_UNREACHABLE (423) means offline
-and rejected. Prefer real devices; identify a selected simulator and never present
-its readings as household state. Inspect snapshot pixels before describing a scene.
+and rejected. Inspect snapshot pixels before describing a scene.
 Prefer one control call for a resolved action: a compact query for a whole-home
 selection or the logical group for a room. Reuse established scope and declarations;
 discover missing context only. Ordinary response-less writes use waitForResult:false.

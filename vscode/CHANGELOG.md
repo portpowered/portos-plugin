@@ -1,5 +1,5 @@
 # Changelog
 
-## 0.1.17
+## 0.1.18
 
-VS Code: the listing now says how to activate the server: open the Agents tab, click the configuration button, then Start on Port OS Smart Home. It also says to click Start again to sign in again after a 401.
+VS Code: the listing now says to run Developer: Reload Window and click Start again when VS Code shows a 401 after an extension update, which is when VS Code keeps a stale sign-in provider.
