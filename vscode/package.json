@@ -1,0 +1,85 @@
+{
+  "name": "portos-smart-home-mcp",
+  "displayName": "Port OS Smart Home MCP",
+  "version": "0.1.14",
+  "description": "Smart home MCP server for VS Code agent mode: control lights, thermostats, vacuums, cameras, locks and speakers from Philips Hue, Sonos, SmartThings and more. Hosted by Port OS; nothing runs locally.",
+  "publisher": "portos",
+  "license": "LicenseRef-Mirumiru-Proprietary",
+  "homepage": "https://portoperatingsystem.com/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/portpowered/portos-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/portpowered/portos-plugin/issues"
+  },
+  "author": {
+    "name": "Mirumiru inc.",
+    "email": "dre@portoperatingsystem.com"
+  },
+  "keywords": [
+    "smart home",
+    "iot",
+    "home automation",
+    "lightbulbs",
+    "lights",
+    "cameras",
+    "thermostats",
+    "robot vacuums",
+    "locks",
+    "devices",
+    "television",
+    "media",
+    "speakers",
+    "spotify",
+    "mcp",
+    "model context protocol",
+    "copilot",
+    "agent",
+    "smart home mcp",
+    "philips hue",
+    "sonos",
+    "smartthings"
+  ],
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "main": "./extension.js",
+  "icon": "icon.png",
+  "activationEvents": [],
+  "files": [
+    "extension.js",
+    "icon.png",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE.md"
+  ],
+  "galleryBanner": {
+    "color": "#0b1220",
+    "theme": "dark"
+  },
+  "pricing": "Free",
+  "preview": false,
+  "qna": false,
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "portos",
+        "label": "Port OS Smart Home"
+      }
+    ]
+  },
+  "portos": {
+    "mcpUrl": "https://api.portoperatingsystem.com/mcp"
+  }
+}

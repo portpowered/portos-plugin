@@ -23,6 +23,20 @@ An assistant helping with this guide explains the steps, but you do them on your
 - A computer with the [Android platform tools](https://developer.android.com/tools/releases/platform-tools) installed, so that `adb --version` works in your terminal.
 - A Port OS account you can sign in to on the website.
 
+### Install adb on your computer
+
+adb (Android Debug Bridge) is the command-line tool that installs the app and grants its permissions. It is part of Google's Android platform tools. Install it with the package manager for your system:
+
+- **Windows** (PowerShell): `winget install Google.PlatformTools`
+- **macOS** (Homebrew): `brew install --cask android-platform-tools`
+- **Linux** (Debian or Ubuntu): `sudo apt install adb`
+
+Or download the platform tools zip for your system from the [Android platform tools page](https://developer.android.com/tools/releases/platform-tools), unzip it and run `adb` from that folder. Open a new terminal afterwards and check that it works:
+
+```text
+adb --version
+```
+
 ## 1. Turn on developer options and wireless debugging
 
 1. On the TV open **Settings > System > About** and select **Android TV OS build** (or **Build**) seven times until the TV says developer mode is on.
@@ -38,10 +52,16 @@ The TV asks you to allow the computer. Choose **Always allow**. `adb devices` li
 
 ## 2. Install the app
 
-Download the app from `https://storage.googleapis.com/portos-downloads-685761720421/android-tv/portos-android-tv-latest.apk` and install it on the TV:
+Download the newest app from the [latest release](https://github.com/portpowered/portos-android-tv/releases/latest) of the public [portos-android-tv](https://github.com/portpowered/portos-android-tv) repository, which also holds its source:
 
 ```text
-adb install -r portos-android-tv-latest.apk
+https://github.com/portpowered/portos-android-tv/releases/latest/download/portos-android-tv.apk
+```
+
+Then install it on the TV:
+
+```text
+adb install -r portos-android-tv.apk
 ```
 
 The app is `com.portoperatingsystem.tv`. It appears with the other apps on the TV home screen.

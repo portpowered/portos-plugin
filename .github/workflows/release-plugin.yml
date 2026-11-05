@@ -101,3 +101,53 @@ jobs:
             fi
           done
           gh release edit "$tag" --draft=false
+  # VS Code Marketplace publication uses Trusted Publishing (OIDC): no PAT is stored. The publisher
+  # policy for the portos publisher must name this repository and workflow. Runs after the GitHub release so
+  # the irreversible Marketplace publish only follows a verified release.
+  vscode:
+    needs: [package, release]
+    if: github.repository == 'portpowered/portos-plugin' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+    env:
+      VSCE: '@vscode/vsce@4.1.0'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24.21.0'
+      - uses: oven-sh/setup-bun@v2
+      - name: Check the extension version matches the tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./vscode/package.json').version")
+          [[ "$GITHUB_REF_NAME" == "v$version" ]] || { echo "Tag $GITHUB_REF_NAME does not match vscode/package.json version $version." >&2; exit 1; }
+      - name: Package the VSIX
+        working-directory: vscode
+        shell: bash
+        run: |
+          set -euo pipefail
+          bunx "$VSCE" package --no-dependencies --out "$RUNNER_TEMP/portos-smart-home-mcp-${GITHUB_REF_NAME#v}.vsix"
+          bunx "$VSCE" ls --no-dependencies
+      - name: Attach the VSIX to the GitHub release without replacing an existing asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # A VSIX is not byte-reproducible, so an existing asset is kept rather than compared.
+          vsix="$RUNNER_TEMP/portos-smart-home-mcp-${GITHUB_REF_NAME#v}.vsix"
+          if gh release view "$GITHUB_REF_NAME" --json assets --jq '.assets[].name' | grep -qx "$(basename "$vsix")"; then
+            echo 'VSIX asset already attached; assets are immutable.'
+          else
+            gh release upload "$GITHUB_REF_NAME" "$vsix"
+          fi
+      - name: Publish the attached VSIX to the VS Code Marketplace
+        shell: bash
+        run: bunx "$VSCE" publish --oidc --packagePath "$RUNNER_TEMP/portos-smart-home-mcp-${GITHUB_REF_NAME#v}.vsix"

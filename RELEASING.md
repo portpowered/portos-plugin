@@ -81,7 +81,7 @@ submission handoff. Backend deployment and directory approval are separate.
    listing to either platform directory.
 3. Inspect the [public workflow runs](https://github.com/portpowered/portos-plugin/actions/workflows/release-plugin.yml).
    Every main push produces a downloadable artifact containing all four ZIPs and
-   checksums. The workflow runs in the public repository, not the monorepo.
+   checksums. The workflow runs only in the public repository.
 4. Publish a versioned GitHub release with either a matching `v<version>` tag
    on the public commit or a manual run from the public `main`:
 
@@ -156,7 +156,7 @@ submission handoff. Backend deployment and directory approval are separate.
    plugin's identity and private audience when testing an upgrade.
    After creating or reconnecting the QA registration, open its ChatGPT settings
    and run **Manage app → Refresh tools**. Discovery can advertise a tool before
-   the host can call it; `Unknown tool` is a failed check, not an empty result.
+   the host can call it; `Unknown tool` means the check failed; it is never an empty result.
 5. Start a fresh ChatGPT chat and select the newly installed QA plugin. Check its setup skill,
    callable tools and a read-only device query. Verify a usable authorization
    action with a tester account that has no existing grant, then inspect the
@@ -247,6 +247,24 @@ reinstall using the native plugin commands. Complete the host's normal OAuth
 connection flow. Start a fresh Codex session and verify the installed plugin's
 skills and its own MCP discovery/read operation. A pre-existing custom MCP
 connection or successful skill loading alone does not accept the shipped artifact.
+
+### Publish the VS Code extension
+
+`make -C plugins/portos build` also builds the **Port OS Smart Home MCP** extension
+from `plugins/portos/vscode/` (`extension.js`, `package.template.json`, `README.md`).
+`scripts/buildVSCodeExtension.mjs` generates `package.json` from `plugin.json` and
+`mcp.json` (version, description, keywords capped at 30, URL), copies the logo as
+`icon.png`, checks `vsce ls` ships only six files and writes
+`dist/assistant-plugins/vscode/portos/` plus `portos-smart-home-mcp-<version>.vsix`.
+`make deploy` copies that folder to `vscode/` in the public repository.
+
+The `vscode` job in `release-plugin.yml` runs on a `v<version>` tag after the GitHub
+release. It checks `vscode/package.json` matches the tag, attaches the VSIX to the
+release and runs `vsce publish --oidc` (Marketplace Trusted Publishing, no PAT).
+The Marketplace publisher is `portos` (extension id `portos.portos-smart-home-mcp`);
+its Trusted Publishing policy must name `portpowered/portos-plugin` and `release-plugin.yml`.
+The `@vscode/vsce` version is pinned in the generator and the workflow; change both together.
+Open VSX is not published yet.
 
 ### Distribute the Claude package
 

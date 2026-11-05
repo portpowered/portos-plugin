@@ -19,7 +19,8 @@ The full paging, upload and cleanup rules are in the Port OS task guide `portos:
 - Browse with `list-folder` and follow `nextCursor` until the listing is complete. Keep the account, library and cursor together.
 - The interface has no search command. To search, list the folder or album and filter the results yourself, and say how much you covered.
 - Download by `fileId` and fetch the returned URI to inspect the real contents. Do not put signed URLs in summaries. The iCloud adapter limits Drive transfers to 10 MiB.
-- Upload the real bytes as base64 with the destination folder, name and MIME type. An existing name is rejected, not overwritten.
+- There is no copy between filesystems. Over MCP a Drive download larger than about 192 KiB fails with `EVENT_PAYLOAD_TOO_LARGE` because of the 256 KiB MCP response limit, and nothing changes. Report that file as not transferred and skip retrying it over MCP.
+- Upload the real bytes as base64 with the destination folder, name and MIME type. An existing name is rejected and the file is left untouched.
 
 ## Confirm before changes
 
