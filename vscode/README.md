@@ -34,11 +34,15 @@ Requires VS Code 1.101 or later with GitHub Copilot Chat.
 
 ## Connect
 
-1. Click **Port OS: Connect** in the status bar, or **Connect** on the notification. You can also run **Port OS: Connect Smart Home MCP** from the command palette.
-2. VS Code asks to let the server sign in. Click **Allow**; your browser opens to sign in to Port OS with Google or a Website sign-in access key.
-3. Review and approve the permissions. Access follows the permissions you approve, per agent, device, person and capability.
-4. Back in VS Code, click **Open Agent Chat**, or open Copilot Chat in **Agent** mode yourself. **Port OS Smart Home** is listed under MCP servers in the tools picker and in **MCP: List Servers**.
-5. Ask "Show my connected devices" to check that Copilot sees the same devices as your dashboard, without controlling anything.
+To activate this MCP server:
+
+1. Go to the **Agents** tab in VS Code and click the configuration button.
+2. Click **Start** on **Port OS Smart Home** to activate it. You can also click **Port OS: Connect** in the status bar, or run **Port OS: Connect Smart Home MCP** from the command palette.
+3. VS Code asks to let the server sign in. Click **Allow**; your browser opens to sign in to Port OS with Google or a Website sign-in access key.
+4. Review and approve the permissions. Access follows the permissions you approve, per agent, device, person and capability.
+5. Back in VS Code, open Copilot Chat in **Agent** mode and ask "Show my connected devices" to check that Copilot sees the same devices as your dashboard, without controlling anything.
+
+If VS Code later shows a 401 or "unauthorized" error for the server, click **Start** again on **Port OS Smart Home** in the same place to sign in again.
 
 You can revoke access at any time from your Port OS account.
 
