@@ -19,7 +19,6 @@ metadata:
 Connect your AI client with the steps in [How to use MCP](https://portoperatingsystem.com/docs/how-to-use-mcp/). The tools:
 
 - `endpoint_query` returns device types, capabilities and message IDs. Narrow `query`, for example `{"type":{"eq":"LIGHT"}}`, or omit it for all permitted devices. Follow every nextToken. Use `expand:["power"]` for observations and `forceDeviceAttributeQuery:true` for a provider refresh.
-- Only `control` takes an `idempotencyKey`; the read tools reject it.
 - `group_query` lists groups, their parent path, child groups and members.
 - `control` sends one declared message with a unique `idempotencyKey` to exactly one target: a device or group `id` from discovery, or a `query` with the same field-first filter as `endpoint_query`.
 - `endpoint_show` shows a device's card, only when the user asks for a card or controls. Never draw your own card.
@@ -38,7 +37,7 @@ Pick the widest target that covers the request, because one command is faster an
 | Every light in the home | One `control.query`, for example `{"type":{"in":["LIGHT","SWITCH","PLUG"]}}` when every SWITCH and PLUG is named for a lamp; otherwise LIGHT plus the lamp-named switches and plugs, by name or ID |
 | A room or zone | The room's group `id` from `group_query` by name, such as `{"name":{"like":"living room"}}`; never filter by role, because a group the user made counts as a room too |
 | One named light | The device `id` from `endpoint_query`, or a query on its exact name, such as `{"name":{"eq":"Porch light"}}`, which avoids copying IDs by hand |
-| "The lamp" or "lamp on" | Only devices named for a lamp, never ceiling lights; when several lamps fit and context does not pick one, ask which |
+| "The lamp" or "lamp on" | The device that is a lamp. When types do not settle it, use the name, room or anything else known, such as a floor plug named "Corner lamp"; when no detail picks one device, ask which |
 
 Never copy a list of IDs, loop over single lights, or send a group command plus leftovers when one query or group covers the request. Resolve a room through `group_query` and inspect its members; matching names misses lights, and a group-only search misses ungrouped lights. A name such as "Everywhere" does not prove coverage. Native capabilities and `membershipComplete` do not prove coverage either.
 
