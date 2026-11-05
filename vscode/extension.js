@@ -6,15 +6,19 @@ const vscode = require('vscode');
 const PROVIDER_ID = 'portos';
 const LABEL = 'Port OS Smart Home';
 const CONNECT_COMMAND = 'portos.connect';
-const WELCOMED_KEY = 'portos.welcomed';
-// VS Code starts extension servers lazily (when agent mode lists tools), so a fresh install shows
-// nothing until the user is told to connect. Starting the server is what opens the sign-in.
+// Set once VS Code has resolved the server, which it does only when starting it.
+const STARTED_KEY = 'portos.started';
+// VS Code starts extension servers lazily (when agent mode lists tools), so until the server has
+// started once the extension keeps offering Connect. Starting the server is what opens the sign-in.
 const CONNECT_ACTION = 'Connect';
 const OPEN_CHAT_ACTION = 'Open Agent Chat';
 const VERIFY_PROMPT = 'Show my connected devices';
 
-/** @param {{ version: string, portos: { mcpUrl: string } }} manifest */
-function createProvider(manifest) {
+/**
+ * @param {{ version: string, portos: { mcpUrl: string } }} manifest
+ * @param {() => void} [onStart] called when VS Code resolves the server to start it
+ */
+function createProvider(manifest, onStart = () => {}) {
   const changed = new vscode.EventEmitter();
   /** @type {vscode.McpServerDefinitionProvider<vscode.McpHttpServerDefinition>} */
   const provider = {
@@ -22,7 +26,10 @@ function createProvider(manifest) {
     provideMcpServerDefinitions: async () => [
       new vscode.McpHttpServerDefinition(LABEL, vscode.Uri.parse(manifest.portos.mcpUrl), {}, manifest.version),
     ],
-    resolveMcpServerDefinition: async server => server,
+    resolveMcpServerDefinition: async server => {
+      onStart();
+      return server;
+    },
   };
   return { provider, changed };
 }
@@ -48,23 +55,28 @@ async function connect(extensionId) {
 }
 
 /** @param {vscode.ExtensionContext} context */
-async function welcome(context) {
-  if (context.globalState.get(WELCOMED_KEY)) return;
-  await context.globalState.update(WELCOMED_KEY, true);
-  const choice = await vscode.window.showInformationMessage(`${LABEL} is installed. Connect and sign in to Port OS to use your devices from Copilot agent mode.`, CONNECT_ACTION);
-  if (choice === CONNECT_ACTION) await connect(context.extension.id);
-}
-
-/** @param {vscode.ExtensionContext} context */
 function activate(context) {
-  const { provider, changed } = createProvider(context.extension.packageJSON);
+  const statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
+  statusItem.text = '$(plug) Port OS: Connect';
+  statusItem.tooltip = `Start ${LABEL} and sign in to Port OS`;
+  statusItem.command = CONNECT_COMMAND;
+  const started = () => {
+    statusItem.hide();
+    void context.globalState.update(STARTED_KEY, true);
+  };
+  const { provider, changed } = createProvider(context.extension.packageJSON, started);
   context.subscriptions.push(
     changed,
+    statusItem,
     vscode.lm.registerMcpServerDefinitionProvider(PROVIDER_ID, provider),
     vscode.commands.registerCommand(CONNECT_COMMAND, () => connect(context.extension.id)),
   );
+  if (context.globalState.get(STARTED_KEY)) return;
+  statusItem.show();
   // Not awaited: starting the server waits for this activation to finish.
-  void welcome(context);
+  void vscode.window
+    .showInformationMessage(`${LABEL} is installed. Connect and sign in to Port OS to use your devices from Copilot agent mode.`, CONNECT_ACTION)
+    .then(choice => (choice === CONNECT_ACTION ? connect(context.extension.id) : undefined));
 }
 
 function deactivate() {}
