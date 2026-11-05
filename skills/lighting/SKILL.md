@@ -19,6 +19,7 @@ metadata:
 Connect your AI client with the steps in [How to use MCP](https://portoperatingsystem.com/docs/how-to-use-mcp/). The tools:
 
 - `endpoint_query` returns device types, capabilities and message IDs. Narrow `query`, for example `{"type":{"eq":"LIGHT"}}`, or omit it for all permitted devices. Follow every nextToken. Use `expand:["power"]` for observations and `forceDeviceAttributeQuery:true` for a provider refresh.
+- Only `control` takes an `idempotencyKey`; the read tools reject it.
 - `group_query` lists groups, their parent path, child groups and members.
 - `control` sends one declared message with a unique `idempotencyKey` to exactly one target: a device or group `id` from discovery, or a `query` with the same field-first filter as `endpoint_query`.
 - `endpoint_show` shows a device's card, only when the user asks for a card or controls. Never draw your own card.
@@ -35,18 +36,21 @@ Pick the widest target that covers the request, because one command is faster an
 | Request | Target |
 | --- | --- |
 | Every light in the home | One `control.query`, for example `{"type":{"in":["LIGHT","SWITCH","PLUG"]}}` when every SWITCH and PLUG is named for a lamp; otherwise LIGHT plus the lamp-named switches and plugs, by name or ID |
-| A room or zone | The room's group `id` from `group_query` |
-| One named light | The device `id` from `endpoint_query` |
+| A room or zone | The room's group `id` from `group_query` by name, such as `{"name":{"like":"living room"}}`; never filter by role, because a group the user made counts as a room too |
+| One named light | The device `id` from `endpoint_query`, or a query on its exact name, such as `{"name":{"eq":"Porch light"}}`, which avoids copying IDs by hand |
+| "The lamp" or "lamp on" | Only devices named for a lamp, never ceiling lights; when several lamps fit and context does not pick one, ask which |
 
 Never copy a list of IDs, loop over single lights, or send a group command plus leftovers when one query or group covers the request. Resolve a room through `group_query` and inspect its members; matching names misses lights, and a group-only search misses ungrouped lights. A name such as "Everywhere" does not prove coverage. Native capabilities and `membershipComplete` do not prove coverage either.
 
-Port OS picks the delivery for the complete target, including a provider's native group when it covers every member, and freezes the matching devices once. A query adds no implicit exclusions, so exclude provider SELF and catalog records, appliances and duplicate copies of a device in the query itself. Simulated devices count like any other device.
+Port OS picks the delivery for the complete target, including a provider's native group when it covers every member, and freezes the matching devices once. A query adds no implicit exclusions, so exclude provider SELF and catalog records, appliances and duplicate copies of a device in the query itself. A duplicate is one device reported twice, for example by two providers. Lights that only share a name, or sit in different rooms, are separate devices, so a whole-home request includes each of them. Simulated devices count like any other device.
 
 ## 3. Lights, plugs and switches
 
 Brands report lamps as LIGHT, SWITCH or PLUG. Power support alone does not make a plug or switch a light: a plug can run a fan or a router.
 
 - Nothing marks a plug or switch as lighting. Include one when its type, name or room indicates a lamp, or the user said so earlier; a plug or switch named for an appliance is not a light.
+- A device named for a fan or appliance is not a light, even when it reports LIGHT. Read names before a whole-home query and leave such devices out of it by ID or name.
+- When no group or device has the room or name the user said, say so and ask. Never substitute a different room, such as Bedroom for Twin bedroom. When the request names several rooms and only some exist, act on those that exist and say which were not found.
 - When "the lights" could mean this room, the whole home or a device or group named "The lights", use the best reading from context: the room the client says the user is in, a recent request, or the only match.
 - Ask one short question when the readings would change different devices and context does not settle it. Then remember the answer for the rest of the conversation, and, if the user agrees, save it: label a lamp plug `LIGHT` with `endpoint_manage SET_TYPE`, or put lights in a group, so later requests need no question.
 - Lights shared from someone else's home are excluded by default. Include them only with an explicit owner, endpoint ID or group selector.
@@ -63,7 +67,7 @@ People asking for lights want a quick answer.
 
 ## 5. Brightness
 
-`set-brightness` takes `{"brightness": <0 to 100>}` in percent. `adjust-brightness` takes `{"brightnessDelta": <-100 to 100>}` percentage points and works only where the device declares it separately. Use the adjust message for "a bit brighter" or "dimmer" when declared; otherwise read the current brightness and set a new value. Some lights do not respond below a minimum brightness; if a low setting fails, suggest a slightly higher value or turning it off.
+`set-brightness` takes `{"brightness": <0 to 100>}` in percent. `adjust-brightness` takes `{"brightnessDelta": <-100 to 100>}` percentage points and works only where the device declares it separately. Use the adjust message for "a bit brighter" or "dimmer" when declared; otherwise read the current brightness with `expand` and set a value below it to dim or above it to brighten. For several lights, pick one value below the lowest reading (or above the highest) and send one command to all of them; a light whose reading you have is never unknown. A light that is off cannot dim, so when every light is off, say so instead of sending a command. Some lights do not respond below a minimum brightness; if a low setting fails, suggest a slightly higher value or turning it off.
 
 ## 6. Color temperature and color
 
@@ -82,7 +86,7 @@ A scene is a saved set of member light settings (power, brightness and color) th
 
 **Recall a scene.** Send the declared `scene/activate` message with `{"sceneId":"<id from available-scenes>"}` to the same logical group that listed it. Keep the selected group ID; Port OS resolves the native provider route. Activation is fire-and-forget: report it as accepted, and fresh-read members only when asked to verify. Recall can turn lights on and change color, so it is a lighting change like any other.
 
-**Save a scene.** Set the member lights to the requested state first and verify them with a fresh read. Then send `scene/create-scene` with `{"name":"<scene name>"}` and `waitForResult:true`. It snapshots the current member settings without changing them and returns `scene-created` with `sceneId` and `name`. Hue limits names to 32 characters and needs every member reachable with readable state. Read `available-scenes` again to confirm, and use the returned ID for later recalls. If the group does not declare `create-scene`, say that saving is unsupported; never save a local label and call it a scene.
+**Save a scene.** First check that the room's group lists `scene/create-scene` in its messages; if it does not, change nothing and say saving is unsupported. "A scene like this" means the lights as they are now, so save without changing them. Only when the user describes a different look, set the member lights to it first and verify them with a fresh read. Then send `scene/create-scene` with `{"name":"<scene name>"}` and `waitForResult:true`. It snapshots the current member settings without changing them and returns `scene-created` with `sceneId` and `name`. Hue limits names to 32 characters and needs every member reachable with readable state. Read `available-scenes` again to confirm, and use the returned ID for later recalls. If the group does not declare `create-scene`, say that saving is unsupported; never save a local label and call it a scene.
 
 **Change a scene.** There is no update message. To change a scene, set the lights, create a new scene, and delete the old one only when the user asks. Never delete existing scenes to make room.
 

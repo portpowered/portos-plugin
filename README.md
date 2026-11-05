@@ -36,21 +36,22 @@ The plugin connects to `https://api.portoperatingsystem.com/mcp`. No local serve
 
 ## Connect
 
-For Claude Code, install from the plugin-only GitHub repository:
+For Claude Code, install from the Claude-only GitHub repository:
 
 ```text
 /plugin install portos --marketplace portpowered/portos-plugin
 ```
 
-For Codex, install the complete public plugin, including its skills and remote MCP connection:
+For Codex, install the complete public plugin, including its skills and remote MCP connection, from the
+release repository:
 
 ```text
-codex plugin marketplace add portpowered/portos-plugin --ref v0.1.7 --json
+codex plugin marketplace add portpowered/portos-plugin-releases --ref v0.1.7 --json
 codex plugin add portos@portos --json
 ```
 
 For ChatGPT, use the ChatGPT ZIP from
-[GitHub Releases](https://github.com/portpowered/portos-plugin/releases) in a
+[GitHub Releases](https://github.com/portpowered/portos-plugin-releases/releases) in a
 supported plugin-upload flow. Public-directory installation requires approval.
 
 Either install adds the skills and the cloud connection
@@ -87,7 +88,7 @@ monitoring and media compatibility require their own acceptance evidence.
 ## Release ZIPs
 
 Download the platform ZIP and `SHA256SUMS` from
-[GitHub Releases](https://github.com/portpowered/portos-plugin/releases/latest):
+[GitHub Releases](https://github.com/portpowered/portos-plugin-releases/releases/latest):
 
 - `portos-claude-<version>.zip`: native Claude plugin with `.claude-plugin/plugin.json` at its root, for Claude hosts supporting plugin ZIP installation.
 - `portos-chatgpt-<version>.zip`: portable Agent Plugins package with `plugin.json` and `mcp.json` at its root, for upload at [OpenAI Plugins](https://platform.openai.com/plugins).
@@ -111,13 +112,13 @@ does not automatically update an installed private QA plugin.
 Upload the matching versioned QA ZIP, complete **Install plugin**, then verify
 its tools in a fresh chat. Updating an installed plugin does not test a fresh install.
 
-Every push to the plugin repository's main branch builds downloadable workflow
+Every push to the release repository's main branch builds downloadable workflow
 artifacts. A `v<version>` tag or a manual run of **Plugin release packages** from
 main publishes the GitHub release. Both manifests must agree with the tag.
 Releasing changed files requires a new manifest version; existing release
 assets are verified and never overwritten.
 
-To reproduce inside the plugin-only repository with Node.js 24.21.0:
+To reproduce inside the release repository with Node.js 24.21.0:
 
 ```text
 node .github/scripts/packagePluginRelease.mjs . dist
@@ -128,8 +129,8 @@ and checksums appear under `dist/assistant-plugins/releases/`.
 
 ## Distribution and verification
 
-Maintainers: follow [the release procedure](https://github.com/portpowered/portos-plugin/blob/main/RELEASING.md) for local generation,
-preview, the reviewed-main push to this repository, GitHub workflow artifacts,
+Maintainers: follow [the release procedure](https://github.com/portpowered/portos-plugin-releases/blob/main/RELEASING.md) for local generation,
+preview, the reviewed-main push to both public repositories, GitHub workflow artifacts,
 and the separate OpenAI and Claude submission steps.
 
 This source provides OpenAI portable and Claude native manifests over the same
