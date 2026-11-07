@@ -14,7 +14,7 @@ metadata:
 
 ## Save and recall a room scene
 
-Use `group_query` to select the logical room, inspect its declared scene messages, and request fresh `expand: ["scene"]` observations. Recall a scene through `control` with its declared `scene/activate` message, `{"sceneId":"<ID from available-scenes>"}` and group ID. Port OS selects a native provider for the complete group; resolve ambiguity first.
+Use `group_query` to select the logical room, inspect its declared scene messages, and request fresh `expand: ["scene"]` observations. Recall a scene through `control` with its declared `scene/activate` message, `{"sceneId":"<ID from available-scenes>"}` and group ID. Port OS selects a native provider for the complete group; resolve ambiguity first. A request that names only a scene does not name a group: read `available-scenes` on every group that declares `scene` to find the room that has it.
 
 To save a new scene, set and verify the requested member light states first. On a group that declares `scene/create-scene`, send `{"name":"<scene name>"}` with `waitForResult: true`. This captures the current member lighting settings without activating them; it returns `scene-created` with `sceneId` and `name`. Hue names allow at most 32 characters and all members must be reachable with readable state. Read the group's scenes again to confirm creation, then use the returned ID to activate it.
 

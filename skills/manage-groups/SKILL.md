@@ -19,7 +19,12 @@ plus resource permission). Keep full IDs and account; clarify ambiguous names.
    idempotency. After conflicts, reread and resolve; never overwrite.
 3. Before any `group_manage` change, read
    [Provider synchronization and outcomes](https://portoperatingsystem.com/docs/for-ai/guides/provider-group-sync.md)
-   including its move example.
+   including its move example. If it cannot be opened, these rules are enough to proceed:
+   create, delete, member changes, move and rename default to `providerSync: BEST_EFFORT`;
+   `MERGE_INTO`, `SET_ENABLEMENT` and `SET_GROUP_ROUTE_ENABLEMENT` accept only
+   `PORTOS_ONLY`; every reference to a group uses its current etag; and a batch is saved
+   when it is `COMMITTED` or `PARTIALLY_SUCCEEDED`. Confirm the exact groups before
+   `DELETE_GROUP` or `MERGE_INTO`.
 
 Native media groups and spatial cleaning targets differ; see
 [vacuum guidance](https://portoperatingsystem.com/docs/for-ai/guides/vacuums.md).

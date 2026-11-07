@@ -26,6 +26,9 @@ For an ambiguous "what's the temperature right now?", clarify indoors or outside
 before requesting a city/ZIP. Indoors, discover a thermostat/temperature sensor and
 read ambient temperature, never its setpoint. Respect explicit outdoor/weather intent.
 
+Window-covering lift is percent open: position 0 and `liftPercent100thsValue` 0 are
+fully closed, 100 and 10000 fully open. Open a blind to 10000 and close it to 0.
+
 Read the task guide index at `references/index.md` and the relevant bundled reference:
 temperature, lighting, cameras, rooms, media, battery, find-phone, files or reminders.
 These same guides are published on the website and at portos://guides/{topic}.

@@ -18,7 +18,7 @@ Validate units/ranges. Ordinary playback/volume uses waitForResult:false; acknow
 
 now-playing.active identifies provider content even while paused; playback-state identifies transport. Spotify cannot describe Sonos-native sessions.
 
-play-uri takes {"uri":"HTTPS_AUDIO_URL"} without transcoding. Match route source kinds/formats: Sonos clips require MP3/WAV; streaming paths differ. play-audio takes {"audio":{"data":"BASE64_BYTES","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
+play-uri takes {"uri":"HTTPS_AUDIO_URL"} without transcoding. Match route source kinds/formats: Sonos clips require MP3/WAV; streaming paths differ. play-audio takes {"audio":{"data":"BASE64_BYTES","mimeType":"audio/wav"}} within supportedAudioMimeTypes and duration limits; never relabel bytes. play-video takes {"video":{"data":"BASE64_BYTES","mimeType":"video/mp4"},"loop":true} within supportedVideoMimeTypes (loop defaults false); only routes declaring that list play files. Clip acceptance means scheduled; event-only clip-status cannot be forced into a live reading.
 
 For TV apps, inspect content-launcher/search-and-play as well as application-launcher. Use declared schemas, keys and app IDs; see [Control a TV](#control-a-tv).
 
